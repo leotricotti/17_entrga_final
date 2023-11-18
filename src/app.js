@@ -8,7 +8,7 @@ import UsersRouter from "./routes/users.routes.js";
 import SessionsRouter from "./routes/sessions.routes.js";
 import ProductsRouter from "./routes/products.routes.js";
 import RealTimeProducts from "./routes/realTimeProducts.routes.js";
-import MockingProducts from "./routes/mockingProducts.routes.js";
+import FakerRouter from "./routes/faker.routes.js";
 import {
   initializeRegisterStrategy,
   initializeGithubStrategy,
@@ -96,12 +96,7 @@ app.use(
   authorization("admin", "premium"),
   RealTimeProducts
 );
-app.use(
-  "/api/mockingProducts",
-  authToken,
-  authorization("user", "premium"),
-  MockingProducts
-);
+//app.use("/api/faker", FakerRouter);
 app.use(errorHandler);
 
 // Ruta para el home

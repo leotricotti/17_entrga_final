@@ -3,6 +3,12 @@ export default class UsersRepository {
     this.dao = dao;
   }
 
+  //Método asyncrono para insertar multiples usuarios
+  async insertManyUsers(data) {
+    const result = await this.dao.insertMany(data);
+    return result;
+  }
+
   //Método asyncrono para obtener todos los usuarios
   async getAllUsers() {
     const result = await this.dao.getAll();

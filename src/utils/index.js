@@ -113,23 +113,27 @@ export const authorization = (...roles) => {
 // Generar usuarios falsos
 export function generateUsers() {
   return {
-    first_name: faker.name.firstName(),
-    last_name: faker.name.lastName(),
+    first_name: faker.person.firstName(),
+    last_name: faker.person.lastName(),
     email: faker.internet.email(),
-    password: faker.internet.password(),
+    password: createHash(faker.internet.password()),
   };
 }
 
 // Generar productos falsos
 export function generateProducts() {
   return {
-    title: faker.commerce.productName(),
-    description: faker.commerce.productDescription(),
-    code: faker.commerce.product(),
+    title: faker.lorem.sentence({ min: 1, max: 3 }),
+    description: faker.lorem.paragraph({ min: 2, max: 4 }),
+    code: faker.number.int({ min: 100000, max: 1000000 }),
     price: faker.commerce.price(),
     stock: faker.number.int(20),
-    category: faker.commerce.department(),
-    image: faker.image.url(),
+    category: faker.helpers.arrayElement(["Audio", "Hogar", "Electronics"]),
+    thumbnail: [
+      {
+        img1: "https://www.hapuricellisa.com.ar/plugins/productos/producto-sin-imagen.png",
+      },
+    ],
   };
 }
 

@@ -15,6 +15,12 @@ export default class ProductsRepository {
     return result;
   };
 
+  // Método asyncrono que crea multiples productos
+  createManyProducts = async (products) => {
+    const result = await this.dao.createMany(products);
+    return result;
+  };
+
   // Método asyncrono para crear un producto
   saveOneProduct = async (product) => {
     const result = await this.dao.saveProduct(product);

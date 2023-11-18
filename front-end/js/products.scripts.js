@@ -23,6 +23,7 @@ const productsHandler = async (handler, index) => {
 
   const products = await result.json();
   const productsData = products.products;
+  console.log(productsData);
   showSpinner(productsData);
 
   const productsContainer = document.getElementById("products-container");

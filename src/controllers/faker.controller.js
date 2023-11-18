@@ -8,7 +8,8 @@ export const generateProductsAndSave = async (req, res) => {
   for (let i = 0; i < 100; i++) {
     products.push(generateProducts());
   }
-  await productsService.insertMany(products);
+  await productsService.createManyProducts(products);
+  req.logger.info("Productos generados con éxito");
   res.json(products);
 };
 
@@ -18,6 +19,6 @@ export const generateUsersAndSave = async (req, res) => {
   for (let i = 0; i < 100; i++) {
     users.push(generateUsers());
   }
-  await usersService.insertMany(users);
+  await usersService.insertManyUsers(users);
   res.json(users);
 };

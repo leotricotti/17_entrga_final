@@ -23,6 +23,17 @@ export default class ProductsDao {
     }
   };
 
+  // Método asyncrono que crea multiples productos
+  createMany = async (products) => {
+    try {
+      const result = await productsModel.insertMany(products);
+      return result;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  };
+
   //Método asyncrono para crear un producto
   saveProduct = async (product) => {
     try {

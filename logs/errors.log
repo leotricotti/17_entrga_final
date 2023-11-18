@@ -341,3 +341,8 @@
 {"level":"error","message":"Error de tipo de dato: Error al informar la última conexión 17/11/2023, 22:51:52"}
 {"level":"error","message":"Error de tipo de dato: Error al informar la última conexión 17/11/2023, 22:55:01"}
 {"level":"error","message":"Error de tipo de dato: Error al informar la última conexión 17/11/2023, 22:55:59"}
+{"level":"error","message":"Error de autenticación. No es prosible autenticar el usuario 18/11/2023, 17:16:51"}
+{"level":"error","message":"Error de base de datos: Usuario no encontrado 18/11/2023, 17:17:34"}
+{"level":"error","message":"Error de base de datos: Usuario no encontrado 18/11/2023, 17:17:57"}
+{"level":"error","message":"Error de autenticación. No es prosible autenticar el usuario 18/11/2023, 17:19:29"}
+{"level":"error","message":"Error de autenticación. No es prosible autenticar el usuario 18/11/2023, 17:19:35"}

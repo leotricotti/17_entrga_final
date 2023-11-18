@@ -1,6 +1,17 @@
 import usersModel from "../models/users.model.js";
 
 export default class UsersDao {
+  //Método asyncrono para insertar multiples usuarios
+  insertMany = async (data) => {
+    try {
+      const result = await usersModel.insertMany(data);
+      return result;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  };
+
   //Método asyncrono para obtener todos los usuarios
   getAll = async () => {
     try {
