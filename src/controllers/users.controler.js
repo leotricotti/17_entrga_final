@@ -1,5 +1,6 @@
 import { usersService } from "../repository/index.js";
 import UsersDto from "../dao/DTOs/users.dto.js";
+import allUsersDto from "../dao/DTOs/allUsers.dto.js";
 import { generateToken, createHash, isValidPassword } from "../utils/index.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enum.js";
@@ -25,7 +26,7 @@ async function getAllUsers(req, res, next) {
       });
       res.status(404).json({ message: "No hay usuarios registrados" });
     }
-    const usersDto = users.map((user) => new UsersDto(user));
+    const usersDto = users.map((user) => new allUsersDto(user));
     req.logger.info(
       `Usuarios enviados al cliente con éxito ${new Date().toLocaleString()}`
     );
@@ -411,6 +412,7 @@ async function addDocumentsToUser(req, res, next) {
 }
 
 export {
+  getAllUsers,
   addDocumentsToUser,
   updateUser,
   userCart,
