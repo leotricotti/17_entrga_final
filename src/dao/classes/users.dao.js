@@ -1,6 +1,17 @@
 import usersModel from "../models/users.model.js";
 
 export default class UsersDao {
+  //Método asyncrono para obtener todos los usuarios
+  getAll = async () => {
+    try {
+      const result = await usersModel.find();
+      return result;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  };
+
   //Método asyncrono para obtener un usuario
   getOne = async (uid) => {
     try {

@@ -9,6 +9,35 @@ import {
 } from "../services/errors/info.js";
 import MailingService from "../services/mailing.js";
 
+// Ruta que obtiene todos los usuarios
+async function getAllUsers(req, res, next) {
+  try {
+    const users = await usersService.getAllUsers();
+    if (users.length === 0) {
+      req.logger.error(
+        `Error de base de datos: No hay usuarios registrados ${new Date().toLocaleString()}`
+      );
+      CustomError.createError({
+        name: "Error de base de datos",
+        cause: generateSessionErrorInfo(users, EErrors.DATABASE_ERROR),
+        message: "No hay usuarios registrados",
+        code: EErrors.DATABASE_ERROR,
+      });
+      res.status(404).json({ message: "No hay usuarios registrados" });
+    }
+    const usersDto = users.map((user) => new UsersDto(user));
+    req.logger.info(
+      `Usuarios enviados al cliente con éxito ${new Date().toLocaleString()}`
+    );
+    res.json({
+      message: "Usuarios enviados al cliente con éxito",
+      data: usersDto,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 // Ruta que realiza el envío de correo de recuperación de contraseña
 async function forgotPassword(req, res, next) {
   const { username } = req.body;

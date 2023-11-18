@@ -3,6 +3,12 @@ export default class UsersRepository {
     this.dao = dao;
   }
 
+  //Método asyncrono para obtener todos los usuarios
+  async getAllUsers() {
+    const result = await this.dao.getAll();
+    return result;
+  }
+
   //Método asyncrono para obtener un usuario
   async getOneUser(uid) {
     const result = await this.dao.getOne(uid);
