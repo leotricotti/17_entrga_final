@@ -1,0 +1,258 @@
+paths:
+  /api/realTimeProducts/:
+    get:
+      summary: Obtiene todos los productos en tiempo real
+      tags:
+        - RealTimeProducts
+      responses:
+        "200":
+          description: Lista de productos en tiempo real
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/Product"
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa
+    post:
+      summary: Crea un producto en tiempo real
+      tags:
+        - RealTimeProducts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/requestBodies/CreateProduct"
+      responses:
+        "200":
+          description: El producto fue creado con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/Product"
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa
+  /api/realTimeProducts/{pid}:
+    get:
+      summary: Obtiene un producto en tiempo real a partir de su id
+      tags:
+        - RealTimeProducts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id del producto que se desea obtener
+          schema:
+            type: String
+      responses:
+        "200":
+          description: El producto fue obtenido con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/Product"
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa
+    put:
+      summary: Actualiza un producto en tiempo real a partir de su id
+      tags:
+        - RealTimeProducts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id del producto que se desea modificar
+          schema:
+            type: String
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/requestBodies/UpdateProduct"
+      responses:
+        "200":
+          description: El producto fue actualizado con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/Product"
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa
+    delete:
+      summary: Elimina un producto en tiempo real a partir de su id
+      tags:
+        - RealTimeProducts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id del producto que se desea eliminar
+          schema:
+            type: String
+      responses:
+        "200":
+          description: El producto fue eliminado con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/DeleteProduct"
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerado por mongo db
+        description:
+          type: String
+          description: Breve descripción del producto
+        code:
+          type: String
+          description: Código único del producto
+        price:
+          type: Number
+          description: Precio del producto
+        status:
+          type: Boolean
+          description: Estado del producto
+          default: true
+        stock:
+          type: Number
+          description: Cantidad de productos disponibles
+        category:
+          type: String
+          description: Categoria del producto
+        owner:
+          type: String
+          description: Id del usuario que creó el producto
+          default: "admin"
+        image:
+          type: Array
+          description: Imagen del producto
+      example:
+        _id: ObjectId("abc12345ascxsdfgbxxssdfs")
+        description: "Camara portable para grabar videos en 4k"
+        code: "ES123"
+        price: 400
+        status: true
+        stock: 10
+        category: "Electronica"
+        owner: "admin"
+        image:
+          [
+            {
+              "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.amazon.com%2FCanon-Mirrorl",
+            },
+          ]
+    DeleteProduct:
+      example:
+        message: "Producto eliminado con éxito"
+    requestBodies:
+      CreateProduct:
+        type: object
+        properties:
+          _id:
+            type: ObjectId
+            description: Id autogenerado por mongo db
+          description:
+            type: String
+            description: Breve descripción del producto
+          code:
+            type: String
+            description: Código único del producto
+          price:
+            type: Number
+            description: Precio del producto
+          status:
+            type: Boolean
+            description: Estado del producto
+            default: true
+          stock:
+            type: Number
+            description: Cantidad de productos disponibles
+          category:
+            type: String
+            description: Categoria del producto
+          owner:
+            type: String
+            description: Id del usuario que creó el producto
+            default: "admin"
+          image:
+            type: Array
+            description: Imagen del producto
+        example:
+          _id: ObjectId("abc12345ascxsdfgbxxssdfs")
+          description: "Camara portable para grabar videos en 4k"
+          code: "ES123"
+          price: 400
+          status: true
+          stock: 10
+          category: "Electronica"
+          owner: "admin"
+          image:
+            [
+              {
+                "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.amazon.com%2FCanon-Mirrorl",
+              },
+            ]
+      UpdateProduct:
+        type: object
+        properties:
+          _id:
+            type: ObjectId
+            description: Id autogenerado por mongo db
+          description:
+            type: String
+            description: Breve descripción del producto
+          code:
+            type: String
+            description: Código único del producto
+          price:
+            type: Number
+            description: Precio del producto
+          status:
+            type: Boolean
+            description: Estado del producto
+            default: true
+          stock:
+            type: Number
+            description: Cantidad de productos disponibles
+          category:
+            type: String
+            description: Categoria del producto
+          owner:
+            type: String
+            description: Id del usuario que creó el producto
+            default: "admin"
+          image:
+            type: Array
+            description: Imagen del producto
+        example:
+          _id: ObjectId("abc12345ascxsdfgbxxssdfs")
+          description: "Camara portable para grabar videos en 4k"
+          code: "ES123"
+          price: 400
+          status: true
+          stock: 10
+          category: "Electronica"
+          owner: "admin"
+          image:
+            [
+              {
+                "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.amazon.com%2FCanon-Mirrorl",
+              },
+            ]

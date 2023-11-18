@@ -1,0 +1,88 @@
+paths:
+  /api/userCart/:
+    put:
+      summary: Agrega el ID del carrito actual a la lista de carritos del usuario
+      tags:
+        - UserCart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+            $ref: "#/components/schemas/requestBodies/UpdateUserCart"
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: ID del carrito que se desea agregar a la lista de carritos del usuario
+          schema:
+            type: string
+        - name: uid
+          in: query
+          required: true
+          description: ID del usuario propietario del carrito
+          schema:
+            type: string
+      responses:
+        "200":
+          description: El carrito fue agregado con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        first_name:
+          type: string
+          maxLength: 100
+          description: Nombre del usuario
+        last_name:
+          type: string
+          maxLength: 100
+          description: Apellido del usuario
+        email:
+          type: string
+          maxLength: 100
+          description: Correo electrónico del usuario
+          format: email
+        password:
+          type: string
+          maxLength: 100
+          description: Contraseña del usuario
+        carts:
+          type: array
+          items:
+            type: MongoDB ID
+            format: string
+          description: Carritos del usuario
+        example:
+          first_name: Juan
+          last_name: Perez
+          email: jperez@gmail.com
+          password: 123456
+          carts: [0: ObjectId ("abc12345ascxsdfgbxxssdfs")]
+    requestBodies:
+      UpdateUserCart:
+        description: Objeto JSON que contiene el ID del usuario y el ID del carrito que se desea agregar a la lista de carritos del usuario
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uid:
+                  type: string
+                  description: ID del usuario propietario del carrito
+                pid:
+                  type: string
+                  description: ID del carrito que se desea agregar a la lista de carritos del usuario
+              example:
+                uid: ObjectId ("abc12345ascxsdfgbxxssdfs")
+                pid: ObjectId ("abc12345ascxsdfgkkkkklfs")

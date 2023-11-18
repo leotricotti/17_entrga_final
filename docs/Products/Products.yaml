@@ -1,0 +1,89 @@
+paths:
+  /api/products/:
+    get:
+      summary: Obtener todos los productos
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Los productos fueron obtenidos satisfactoriamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/Products"
+        "500":
+          description: Error interno del servidor,usualmente generado por una query defectuosa
+  /api/products/{id}:
+    get:
+      summary: Obtiene solo un producto a partir de su id
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id del producto a solicitar
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Los productos fueron obtenidos satisfactoriamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#components/schemas/Products"
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa
+components:
+  schemas:
+    Products:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerado por mongo db
+        description:
+          type: String
+          description: Breve descripción del producto
+        code:
+          type: String
+          description: Código único del producto
+        price:
+          type: Number
+          description: Precio del producto
+        status:
+          type: Boolean
+          description: Estado del producto
+          default: true
+        stock:
+          type: Number
+          description: Cantidad de productos disponibles
+        category:
+          type: String
+          description: Categoria del producto
+        owner:
+          type: String
+          description: Id del usuario que creó el producto
+          default: "admin"
+        image:
+          type: Array
+          description: Imagen del producto
+      example:
+        _id: ObjectId("abc12345ascxsdfgbxxssdfs")
+        description: "Camara portable para grabar videos en 4k"
+        code: "ES123"
+        price: 400
+        status: true
+        stock: 10
+        category: "Electronica"
+        owner: "admin"
+        image:
+          [
+            {
+              "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.amazon.com%2FCanon-Mirrorl",
+            },
+          ]

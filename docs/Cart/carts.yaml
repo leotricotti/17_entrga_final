@@ -1,0 +1,198 @@
+paths:
+  /api/carts/:
+    get:
+      summary: Obtener todos los carritos
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: Los carritos fueron obtenidos con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Carts"
+        "500":
+          description: Error interno del servidor,usualmente generado por una query defectuosa
+    post:
+      summary: Crea un carrito vacio en la base de datos
+      tags:
+        - Carts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/requestBodies/CreateCart"
+      responses:
+        "200":
+          description: El carrito fue creado con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmptyCart"
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa
+  /api/carts/{cid}:
+    get:
+      summary: Obtener un carrito por id
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito a obtener
+          schema:
+            type: string
+      responses:
+        "200":
+          description: El carrito fue obtenido con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Carts"
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa
+    put:
+      summary: Vacia el carrito de productos
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito que se desea vaciar
+          schema:
+            type: string
+      responses:
+        "200":
+          description: El carrito fue vaciado con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmptyCart"
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa
+  /api/carts/{cid}/product/{pid}:
+    put:
+      summary: Agrega un producto al carrito y aumenta o disminuye la cantidad de un producto dentro del carrito
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: ID del carrito que se desea modificar
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto que se desea modificar
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/requestBodies/UpdateCart"
+      responses:
+        "200":
+          description: El carrito fue actualizado con éxito
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Carts"
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa
+    delete:
+      summary: Elimina un producto dentro del carrito
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Id del carrito que se desea modificar
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: ID del producto que se desea eliminar
+          schema:
+            type: string
+      responses:
+        "200":
+          description: El producto fue eliminado con éxito
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Carts"
+        "500":
+          description: Error interno del servidor, usualmente generado por una query defectuosa
+components:
+  schemas:
+    EmptyCart:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: mongoId
+          description: ID del carrito (opcional)
+        products:
+          type: array
+      example:
+        _id: ObjectId(abc12345ascxsdfgbxxssdfs)
+        products: []
+    Carts:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                type: string
+                format: mongoId
+                description: ID del producto
+              quantity:
+                type: number
+                description: Cantidad del producto
+      example:
+        products:
+          - product: ObjectId(abc12345ascxsdfgbxxssdfs)
+            quantity: 2
+          - product: ObjectId(abc12345ascxsdfgbfdsfdas)
+            quantity: 1
+    requestBodies:
+      CreateCart:
+        type: object
+        properties:
+          id:
+            type: string
+            format: mongoId
+            description: ID del carrito
+          products:
+            type: array
+            description: Array de productos
+        example:
+          products: []
+      UpdateCart:
+        type: object
+        properties:
+          quantity:
+            type: string
+            description: Operación a realizar en la cantidad del producto
+        example:
+          op: add
