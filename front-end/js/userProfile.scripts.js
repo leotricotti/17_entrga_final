@@ -87,17 +87,6 @@ const addUserProfileImage = async (userProfileImage) => {
   return result;
 };
 
-// Funcion que crea el titulo de acuerdo al nombre del documento
-const updatedDocumentLabel = (documentName) => {
-  if (documentName === "userIdDocument") {
-    return "Documento de identidad";
-  } else if (documentName === "userAddressDocument") {
-    return "Comprobante de domicilio";
-  } else {
-    return "Comprobante de pago";
-  }
-};
-
 // Función que compruba si el usuario subió una imagen de perfil
 const checkUserProfileImage = () => {
   const userImage = userProfile[0].documents.filter(
@@ -110,7 +99,7 @@ const checkUserProfileImage = () => {
       "/profiles/" + referenceParts[referenceParts.length - 1];
     return `<img class="rounded-circle mt-5" width="150px" height="150px" style="object-fit: contain" src="http://localhost:${PORT}${finalReference}" />`;
   } else {
-    return `<img class="rounded-circle mt-5" width="150px" src="../img/user-avatar.jpg" />`;
+    return `<img class="rounded-circle mt-5" width="150px" src="../img/user-avatar.svg" />`;
   }
 };
 
@@ -122,7 +111,7 @@ function renderUserProfile() {
     ${userProfile.map((user) => {
       return `
         <div class="row">
-          <div class="col-md-3 border-right">
+          <div class="col-md-4 border-right">
             <div class="d-flex flex-column align-items-center text-center p-3 py-5">
               <div class="position-relative">
                 ${checkUserProfileImage()}
@@ -148,7 +137,7 @@ function renderUserProfile() {
               <span> </span>
             </div>
           </div>
-          <div class="col-md-5 border-right">
+          <div class="col-md-7 border-right">
             <div class="p-3 py-5">
               <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="text-right">Perfil</h4>
@@ -237,47 +226,6 @@ function renderUserProfile() {
                     Guardar cambios
                   </button>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4" id="user-profile-form">
-            <div class="p-3 py-5">
-              <div class="d-flex justify-content-between align-items-center experience">
-              <div class="mb-3">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="text-right">Archivos</h4>
-              </div>
-              ${
-                user.documents &&
-                user.documents.some(
-                  (document) => document.name !== "userProfileImage"
-                )
-                  ? user.documents
-                      .map((document) => {
-                        return `  
-                        <div class="d-flex flex-column">
-                        <p class="labels mb-2 text-decoration-underline">${updatedDocumentLabel(
-                          document.name
-                        )}</p>
-                        <span class="labels mb-2 text-success">&#x2022; Documeto cargado 
-                        con éxito</span>
-                        </div>
-                        `;
-                      })
-                      .join("")
-                  : `<label class="labels mb-2 text-decoration-underline">Documento de identidad</label>
-                  <div id="link-container"></div>
-                  <input class="form-control" type="file" id="user-id-document" accept="image/*" autocomplete="off" required />
-                  <br />
-                  <label class="labels mb-2 text-decoration-underline">Comprobante de domicilio</label>
-                  <div id="link-container-one"></div>
-                  <input class="form-control" type="file" id="user-address-document" accept="image/*" autocomplete="off" required />
-                  <br />
-                  <label class="labels mb-2 text-decoration-underline">Comprobante de pago</label>
-                  <div id="link-container-two"></div>
-                  <input class="form-control" type="file" id="user-count-document" accept="image/*" autocomplete="off" required />
-                  `
-              }
               </div>
             </div>
           </div>
@@ -449,52 +397,7 @@ async function sendProfileData(data) {
   return result;
 }
 
-// Función que envía los documentos del usuario al servidor
-const sendDocumentsData = async (
-  userIdDocument,
-  userAddressDocument,
-  userCountDocument
-) => {
-  const userId = userProfile[0].email;
-  const formData = new FormData();
-  formData.append("userIdDocument", userIdDocument);
-  formData.append("userAddressDocument", userAddressDocument);
-  formData.append("userCountDocument", userCountDocument);
-
-  const response = await fetch(
-    `http://localhost:${PORT}/api/users/${userId}/documents`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    }
-  );
-
-  const result = await response.json();
-
-  return result;
-};
-
-// Agrega un evento de cambio a cada campo del formulario
-document.querySelectorAll(".form-control").forEach((input) => {
-  input.addEventListener("change", async (event) => {
-    // Obtiene el valor actualizado del campo
-    const newValue = event.target.value;
-
-    // Actualiza el perfil del usuario en la base de datos con el nuevo valor
-    const updatedUserProfile = {
-      ...userProfile,
-      [event.target.id]: newValue,
-    };
-    await sendProfileData(updatedUserProfile);
-
-    // Actualiza solo el campo específico en la página con el nuevo valor
-    event.target.value = newValue;
-  });
-});
-
+// Función que redirige al usuario a la página de productos
 const goToProducts = () => {
   window.location.href = `http://127.0.0.1:${localPort}/html/products.html`;
 };

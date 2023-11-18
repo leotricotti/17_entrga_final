@@ -1,5 +1,10 @@
 import { Router } from "express";
-import { verifyToken, authToken, uploader } from "../utils/index.js";
+import {
+  verifyToken,
+  authToken,
+  uploader,
+  authorization,
+} from "../utils/index.js";
 import {
   addDocumentsToUser,
   updateUser,
@@ -8,21 +13,19 @@ import {
   updateUserRole,
   currentUser,
   userCart,
+  getAllUsers,
 } from "../controllers/users.controler.js";
 import { passportCall } from "../utils/index.js";
 
 const router = Router();
 
+// Ruta que envia todos los usuarios
+router.get("/", authToken, authorization("admin"), getAllUsers);
 // Ruta que agregaa un documento al usuario
 router.post(
   "/:uid/documents",
   authToken,
-  uploader.fields([
-    { name: "userIdDocument", maxCount: 3 },
-    { name: "userAddressDocument", maxCount: 3 },
-    { name: "userCountDocument", maxCount: 3 },
-    { name: "userProfileImage", maxCount: 1 },
-  ]),
+  uploader.fields([{ name: "userProfileImage", maxCount: 1 }]),
   addDocumentsToUser
 );
 
