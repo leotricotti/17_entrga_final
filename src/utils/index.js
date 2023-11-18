@@ -2,7 +2,7 @@ import passport from "passport";
 import bcrypt from "bcrypt";
 import config from "../config/config.js";
 import jwt from "jsonwebtoken";
-import { faker } from "@faker-js/faker";
+import { faker } from "@faker-js/faker/locale/es";
 import { usersService } from "../repository/index.js";
 import multer from "multer";
 import __dirname from "../../utils.js";
@@ -110,10 +110,19 @@ export const authorization = (...roles) => {
   };
 };
 
+// Generar usuarios falsos
+export function generateUsers() {
+  return {
+    first_name: faker.name.firstName(),
+    last_name: faker.name.lastName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+  };
+}
+
 // Generar productos falsos
 export function generateProducts() {
   return {
-    id: faker.database.mongodbObjectId(),
     title: faker.commerce.productName(),
     description: faker.commerce.productDescription(),
     code: faker.commerce.product(),
