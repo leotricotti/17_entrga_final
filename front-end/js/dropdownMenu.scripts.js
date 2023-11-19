@@ -11,6 +11,18 @@ const goToUserProfile = () => {
   window.location.href = `http://127.0.0.1:${localPort}/html/userProfile.html`;
 };
 
+// Función que redirige al perfil de todos los usuarios
+const goToAllUsersProfile = () => {
+  const localPort = localStorage.getItem("localPort");
+  window.location.href = `http://127.0.0.1:${localPort}/html/allUsers.html`;
+};
+
+// Función que redirige a la documentación de la API
+const gotToRealTimeProducts = () => {
+  const localPort = localStorage.getItem("localPort");
+  window.location.href = `http://127.0.0.1:${localPort}/html/realTimeProducts.html`;
+};
+
 // Función para renderizar el botón de cambio de rol
 const renderDropdownMenu = () => {
   let html = "";
@@ -87,13 +99,43 @@ const renderDropdownMenu = () => {
       </button>
     </li>
   `;
-  } else if (userRoleData === "admin") {
+  } else if (
+    userRoleData === "admin" &&
+    window.location.pathname === "/html/realTimeProducts.html"
+  ) {
     html = `
     <li>
-    <button class="btn dropdown-item" onclick="getDocumentation()">
-    <i class="fa-solid fa-file"></i>
-       API Documentation  
+    <button class="btn dropdown-item" onclick="goToAllUsersProfile()">
+    <i class="fa-solid fa-user"></i>
+       Users Profile 
      </button>
+     <button class="btn dropdown-item" onclick="getDocumentation()">
+     <i class="fa-solid fa-file"></i>
+        API Documentation  
+      </button>
+   </li>
+   <div class="dropdown-divider"></div>
+    <li>
+    <button class="btn dropdown-item" onclick="logout()">
+       <i class="fas fa-sign-out-alt fa-fw"></i>
+       Cerrar sesión
+     </button>
+   </li>
+  `;
+  } else if (
+    userRoleData === "admin" &&
+    window.location.pathname === "/html/allUsers.html"
+  ) {
+    html = `
+    <li>
+    <button class="btn dropdown-item" onclick="gotToRealTimeProducts()">
+    <i class="fa-brands fa-product-hunt"></i>
+       Real Time Products 
+     </button>
+     <button class="btn dropdown-item" onclick="getDocumentation()">
+     <i class="fa-solid fa-file"></i>
+        API Documentation  
+      </button>
    </li>
    <div class="dropdown-divider"></div>
     <li>

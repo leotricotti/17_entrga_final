@@ -54,7 +54,6 @@ const getUser = async () => {
     });
 
     const result = await response.json();
-    console.log(result);
     const role = result.data.role;
     if (result) {
       localStorage.setItem("user", JSON.stringify(result.data));

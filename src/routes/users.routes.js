@@ -20,8 +20,9 @@ import { passportCall } from "../utils/index.js";
 const router = Router();
 
 // Ruta que envia todos los usuarios
-router.get("/", authToken, /*authorization("admin")*/ getAllUsers);
-// Ruta que agregaa un documento al usuario
+router.get("/", authToken, authorization("admin"), getAllUsers);
+
+// Ruta que agrega un documento al usuario
 router.post(
   "/:uid/documents",
   authToken,

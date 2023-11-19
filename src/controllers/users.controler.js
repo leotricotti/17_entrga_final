@@ -288,6 +288,7 @@ async function updateUserRole(req, res, next) {
   const { role } = req.body;
   const { id } = req.params;
   const username = id;
+  console.log(role);
   try {
     if (!role || !username) {
       const result = [role, username];

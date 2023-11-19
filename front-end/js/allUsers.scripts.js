@@ -10,9 +10,7 @@ function capitalize(str) {
 }
 
 // Función que captura la información del usuario y la almacena en el local storage
-const getAllUser = async () => {
-  const premium = "premium";
-
+const getAllUsers = async () => {
   try {
     const response = await fetch(`http://localhost:${PORT}/api/users`, {
       method: "GET",
@@ -24,7 +22,6 @@ const getAllUser = async () => {
 
     const result = await response.json();
     usersProfile.push(...result.data);
-    console.log(result.data);
     if (result.message !== "Usuarios enviados al cliente con éxito") {
       Swal.fire({
         icon: "error",
@@ -49,8 +46,6 @@ const getAllUser = async () => {
   }
 };
 
-console.log(usersProfile);
-
 // Función que renderiza el perfil del usuario
 function renderAllUsersProfile() {
   let html = "";
@@ -70,9 +65,10 @@ function renderAllUsersProfile() {
             </div>
             <div class="mb-5  text-center">
             <button
-              type="submit"
+              type="button"
               id="signup-button"
               class="btn btn-secondary profile-button"
+              onclick="updateUserRole('${user.email}', '${user.role}')"
             >
               Actualizar Role
             </button>
@@ -121,7 +117,92 @@ function renderAllUsersProfile() {
   profileContainer.innerHTML = html;
 }
 
-document.addEventListener("DOMContentLoaded", getAllUser);
+document.addEventListener("DOMContentLoaded", getAllUsers);
+
+// Función para actualizar el rol del usuario
+async function updateUserRole(userId, userRole) {
+  let newRoleData = "";
+
+  if (userRole === "user") {
+    newRoleData = "premium";
+  } else {
+    newRoleData = "user";
+  }
+
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: "¡Estás a punto de actualizar el rol del usuario!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: `Sí, actualizar`,
+    cancelButtonText: "Cancelar",
+    showClass: {
+      popup: "animate__animated animate__zoomIn",
+    },
+    hideClass: {
+      popup: "animate__animated animate__zoomOut",
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      sendNewRoleToServer(userId, newRoleData);
+    }
+  });
+}
+
+const sendNewRoleToServer = async (userId, newRoleData) => {
+  const token = localStorage.getItem("token");
+  const PORT = localStorage.getItem("port");
+
+  const response = await fetch(
+    `http://localhost:${PORT}/api/users/premium/${userId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        role: newRoleData,
+      }),
+    }
+  );
+
+  const result = await response.json();
+
+  if (!result.message === "Rol actualizado con exito") {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "No se pudo actualizar el rol",
+      confirmButtonText: "Aceptar",
+      showClass: {
+        popup: "animate__animated animate__zoomIn",
+      },
+      hideClass: {
+        popup: "animate__animated animate__zoomOut",
+      },
+    });
+  } else {
+    Swal.fire({
+      icon: "success",
+      title: "¡Felicitaciones!",
+      text: "Rol actualizado con éxito",
+      confirmButtonText: "Aceptar",
+      showClass: {
+        popup: "animate__animated animate__zoomIn",
+      },
+      hideClass: {
+        popup: "animate__animated animate__zoomOut",
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        renderAllUsersProfile();
+      }
+    });
+  }
+};
 
 // Función que redirige al usuario a la página de productos
 const goToProducts = () => {
