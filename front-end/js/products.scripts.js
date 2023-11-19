@@ -92,7 +92,7 @@ const productsHandler = async (handler, index) => {
                 <div class="d-flex flex-row align-items-center mb-1">
                   <h4 class="mb-1 me-1">$ ${discountedPrice}</h4>
                   <span class="text-danger">
-                    <s> $ ${product.price} </s>
+                    <s> $ ${product.price}.99</s>
                   </span>
                 </div>
                 <h6 class="text-success">Envio gratis</h6>
