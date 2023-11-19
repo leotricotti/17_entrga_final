@@ -51,8 +51,15 @@ export default class UsersRepository {
     return result;
   };
 
+  // Metodo asyncrono que actualiza la imagen de perfil
   updateOneProfileImage = async (id, profileImage) => {
     const result = await this.dao.updateProfileImage(id, profileImage);
+    return result;
+  };
+
+  // Metodo asyncrono que elimina usuarios sin conexion
+  deleteDisconnectedUsers = async () => {
+    const result = await this.dao.deleteUnconnected();
     return result;
   };
 }

@@ -288,7 +288,6 @@ async function updateUserRole(req, res, next) {
   const { role } = req.body;
   const { id } = req.params;
   const username = id;
-  console.log(role);
   try {
     if (!role || !username) {
       const result = [role, username];
@@ -412,7 +411,39 @@ async function addDocumentsToUser(req, res, next) {
   }
 }
 
+// Ruta que elimina los usuarios sin conexión
+async function deleteUnconnectedUsers(req, res, next) {
+  try {
+    const result = await usersService.deleteDisconnectedUsers();
+    if (!result) {
+      req.logger.error(
+        `Error de base de datos: Error al eliminar los usuarios sin conexión ${new Date().toLocaleString()}`
+      );
+      CustomError.createError({
+        name: "Error de base de datos",
+        cause: generateSessionErrorInfo(result, EErrors.DATABASE_ERROR),
+        message: "Error al eliminar los usuarios sin conexión",
+        code: EErrors.DATABASE_ERROR,
+      });
+      res
+        .status(404)
+        .json({ message: "Error al eliminar los usuarios sin conexión" });
+    } else {
+      req.logger.info(
+        `Usuarios sin conexión eliminados con éxito ${new Date().toLocaleString()}`
+      );
+      res.json({
+        message: "Usuarios sin conexión eliminados con éxito",
+        data: result,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
 export {
+  deleteUnconnectedUsers,
   getAllUsers,
   addDocumentsToUser,
   updateUser,

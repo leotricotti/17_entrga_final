@@ -198,7 +198,7 @@ const sendNewRoleToServer = async (userId, newRoleData) => {
       },
     }).then((result) => {
       if (result.isConfirmed) {
-        renderAllUsersProfile();
+        window.location.reload();
       }
     });
   }
