@@ -96,7 +96,7 @@ app.use(
   authorization("admin", "premium"),
   RealTimeProducts
 );
-//app.use("/api/faker", FakerRouter);
+app.use("/api/faker", FakerRouter);
 app.use(errorHandler);
 
 // Ruta para el home

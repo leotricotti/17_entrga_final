@@ -134,7 +134,6 @@ function renderUserProfile() {
         user.last_name
       }</span>
               <span class="text-black-50">${user.email}</span>
-              <span> </span>
             </div>
           </div>
           <div class="col-md-7 border-right">

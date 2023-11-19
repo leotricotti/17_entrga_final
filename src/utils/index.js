@@ -112,11 +112,18 @@ export const authorization = (...roles) => {
 
 // Generar usuarios falsos
 export function generateUsers() {
+  // Generar datos falsos
+  const lastName = faker.person.lastName();
+  const removeSpaces = lastName.replace(/\s/g, "");
+  const email = `${removeSpaces}@gmail.com`.toLowerCase();
   return {
     first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
-    email: faker.internet.email(),
+    last_name: lastName,
+    email: email,
     password: createHash(faker.internet.password()),
+    last_conection: [
+      { action: `Login realizado con éxito ${faker.date.recent({ days: 3 })}` },
+    ],
   };
 }
 

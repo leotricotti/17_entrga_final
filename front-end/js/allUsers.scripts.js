@@ -1,9 +1,13 @@
 //Variables globales
 const usersProfile = [];
-const userProfileForm = document.getElementById("user-profile-form");
+const profileContainer = document.getElementById("profile-container");
 const token = localStorage.getItem("token");
 const PORT = localStorage.getItem("port");
 const localPort = localStorage.getItem("localPort");
+
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
 
 // Función que captura la información del usuario y la almacena en el local storage
 const getAllUser = async () => {
@@ -19,12 +23,24 @@ const getAllUser = async () => {
     });
 
     const result = await response.json();
-    usersProfile.push(result.data);
+    usersProfile.push(...result.data);
+    console.log(result.data);
     if (result.message !== "Usuarios enviados al cliente con éxito") {
       Swal.fire({
         icon: "error",
-        title: ''
+        title: "Oops...",
+        text: "No se pudo cargar la información de los usuarios",
+        confirmButtonText: "Aceptar",
+        showClass: {
+          popup: "animate__animated animate__zoomIn",
+        },
+        hideClass: {
+          popup: "animate__animated animate__zoomOut",
+        },
       });
+    } else {
+      showSpinner(usersProfile);
+      renderAllUsersProfile();
     }
 
     return result;
@@ -33,38 +49,34 @@ const getAllUser = async () => {
   }
 };
 
+console.log(usersProfile);
+
 // Función que renderiza el perfil del usuario
 function renderAllUsersProfile() {
   let html = "";
-
   html += `
     ${usersProfile.map((user) => {
-      console.log(user);
       return `
-        <div class="row">
+        <div class="row container rounded bg-white w-50">
           <div class="col-md-4 border-right">
             <div class="d-flex flex-column align-items-center text-center p-3 py-5">
               <div class="position-relative">
-              <img class="rounded-circle mt-5" width="150px" src="../img/user-avatar.svg" />
-                <button
-                  type="button"
-                  class="btn position-absolute"
-                  style="
-                    background-color: #eee;
-                    border-radius: 50%;
-                    bottom: 10px;
-                    right: 20px;
-                  "
-                  id="user-profile-image"
-                >
-                  <input type="file" class="form-control d-none" />
-                  <i class="fas fa-camera"></i>
-                </button>
+                <img class="rounded-circle" width="150px" height="150px" src="../img/user-avatar.png" />
               </div>
-              <span class="font-weight-bold">${user.first_name} ${user.last_name}</span>
+              <span class="font-weight-bold">${user.first_name} ${
+        user.last_name
+      }</span>
               <span class="text-black-50">${user.email}</span>
-              <span> </span>
             </div>
+            <div class="mb-5  text-center">
+            <button
+              type="submit"
+              id="signup-button"
+              class="btn btn-secondary profile-button"
+            >
+              Actualizar Role
+            </button>
+          </div>
           </div>
           <div class="col-md-7 border-right">
             <div class="p-3 py-5">
@@ -73,14 +85,32 @@ function renderAllUsersProfile() {
               </div>
               <div class="row mt-2">
                 <div class="col-md-6">
-                  <label class="labels" for='first_name'>Nombre</label>
-                  <input type="text" class="form-control" value=${user.first_name} id='first_name' autocomplete="off" required/>
+                  <span class="text-underline mb-4" >
+                   <u>Nombre</u>
+                  </span>
+                  <p class='text' >${user.first_name}</p>
                 </div>
                 <div class="col-md-6">
-                  <label class="labels" for="last_name">Apellido</label>
-                  <input type="text" class="form-control" value=${user.last_name} id="last_name" autocomplete="off" required/>
+                  <span class="text-underline mb-4" >
+                    <u>Apellido</u>
+                  </span>
+                  <p class='text' >${user.last_name}</p>
                 </div>
               </div>
+              <div class="row mt-2">
+              <div class="col-md-12">
+                <span class="text-underline mb-4" >
+                 <u>Correo Electrónico</u>
+                </span>
+                <p class='text' >${user.email}</p>
+              </div>
+              <div class="col-md-12">
+                <span class="text-underline mb-4" >
+                  <u>Role</u>
+                </span>
+                <p class='text'>${capitalize(user.role)}</p>
+              </div>
+            </div>
             </div>
           </div>
         </div>
@@ -88,14 +118,10 @@ function renderAllUsersProfile() {
     })}
   `;
 
-  userProfileForm.innerHTML = html;
+  profileContainer.innerHTML = html;
 }
 
-document.addEventListener(
-  "DOMContentLoaded",
-  getAllUser,
-  renderAllUsersProfile
-);
+document.addEventListener("DOMContentLoaded", getAllUser);
 
 // Función que redirige al usuario a la página de productos
 const goToProducts = () => {

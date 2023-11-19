@@ -346,3 +346,9 @@
 {"level":"error","message":"Error de base de datos: Usuario no encontrado 18/11/2023, 17:17:57"}
 {"level":"error","message":"Error de autenticación. No es prosible autenticar el usuario 18/11/2023, 17:19:29"}
 {"level":"error","message":"Error de autenticación. No es prosible autenticar el usuario 18/11/2023, 17:19:35"}
+{"level":"error","message":"Error de base de datos: No hay usuarios registrados 18/11/2023, 22:39:58"}
+{"level":"error","message":"Error de autenticación. No fue posible verificar el token 18/11/2023, 22:45:59"}
+{"level":"error","message":"Error de autenticación. No fue posible verificar el token 18/11/2023, 22:46:16"}
+{"level":"error","message":"Error de base de datos: Usuario no encontrado 18/11/2023, 22:46:24"}
+{"level":"error","message":"Error de base de datos: Usuario no encontrado 19/11/2023, 0:10:25"}
+{"level":"error","message":"Error de base de datos: Usuario no encontrado 19/11/2023, 0:28:12"}
