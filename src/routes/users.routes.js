@@ -6,6 +6,7 @@ import {
   authorization,
 } from "../utils/index.js";
 import {
+  deleteUnconnectedUsers,
   addDocumentsToUser,
   updateUser,
   forgotPassword,
@@ -21,6 +22,9 @@ const router = Router();
 
 // Ruta que envia todos los usuarios
 router.get("/", authToken, authorization("admin"), getAllUsers);
+
+// Ruta que envia el usuario logueado
+router.get("/current", passportCall("jwt"), currentUser);
 
 // Ruta que agrega un documento al usuario
 router.post(
@@ -45,7 +49,7 @@ router.put("/premium/:id", authToken, updateUserRole);
 // Ruta que actualiza el carrito del usuario
 router.put("/cart", authToken, userCart);
 
-// Ruta que envia el usuario logueado
-router.get("/current", passportCall("jwt"), currentUser);
+// Ruta que elimina los usuarios sin conección
+router.delete("/deleteUnconnectedUsers", deleteUnconnectedUsers);
 
 export default router;

@@ -128,6 +128,10 @@ const renderDropdownMenu = () => {
   ) {
     html = `
     <li>
+    <button class="btn dropdown-item" onclick="goToAllUsersProfile()">
+    <i class="fa-solid fa-user-minus"></i>
+       Delete Users 
+     </button>
     <button class="btn dropdown-item" onclick="gotToRealTimeProducts()">
     <i class="fa-brands fa-product-hunt"></i>
        Real Time Products 

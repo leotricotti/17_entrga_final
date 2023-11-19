@@ -4,6 +4,7 @@ const profileContainer = document.getElementById("profile-container");
 const token = localStorage.getItem("token");
 const PORT = localStorage.getItem("port");
 const localPort = localStorage.getItem("localPort");
+const prevUsersQuantity = usersProfile.length;
 
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -48,8 +49,23 @@ const getAllUsers = async () => {
 
 // Función que renderiza el perfil del usuario
 function renderAllUsersProfile() {
+  const usersDeleted = deletedUsersQuantity();
   let html = "";
   html += `
+  <div class="row container w-50 d-flex justify-content-around">
+    <div class="col-md-6 mb-3">
+      <h4>
+        Usuarios totales:
+        <small class="text-muted">${usersProfile.length}</small>
+      </h4>
+    </div>
+    <div class="col-md-6 mb-3">
+      <h4>
+        Usuarios eliminados:
+        <small class="text-muted">${usersDeleted}</small>
+      </h4>
+    </div>
+  </div>
     ${usersProfile.map((user) => {
       return `
         <div class="row container rounded bg-white w-50">
@@ -202,6 +218,92 @@ const sendNewRoleToServer = async (userId, newRoleData) => {
       }
     });
   }
+};
+
+// Función que elimina los usuarios desconectad
+const deleteUnConnectedUsers = () => {
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: "¡Estás a punto de eliminar los usuarios desconectados!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: `Sí, eliminar`,
+    cancelButtonText: "Cancelar",
+    showClass: {
+      popup: "animate__animated animate__zoomIn",
+    },
+    hideClass: {
+      popup: "animate__animated animate__zoomOut",
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      deleteUsers();
+    }
+  });
+};
+
+// Función que elimina los usuarios desconectados
+const deleteUsers = async () => {
+  const token = localStorage.getItem("token");
+  const PORT = localStorage.getItem("port");
+
+  const response = await fetch(
+    `http://localhost:${PORT}/api/users/deleteUnconnectedUsers`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        users: users,
+      }),
+    }
+  );
+
+  const result = await response.json();
+
+  if (!result.message === "Usuarios eliminados con exito") {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "No se pudo eliminar los usuarios",
+      confirmButtonText: "Aceptar",
+      showClass: {
+        popup: "animate__animated animate__zoomIn",
+      },
+      hideClass: {
+        popup: "animate__animated animate__zoomOut",
+      },
+    });
+  } else {
+    Swal.fire({
+      icon: "success",
+      title: "¡Felicitaciones!",
+      text: "Usuarios eliminados con éxito",
+      confirmButtonText: "Aceptar",
+      showClass: {
+        popup: "animate__animated animate__zoomIn",
+      },
+      hideClass: {
+        popup: "animate__animated animate__zoomOut",
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deletedUsersQuantity();
+        window.location.reload();
+      }
+    });
+  }
+};
+
+const newQuantity = usersProfile.length;
+const deletedUsers = prevUsersQuantity - newQuantity;
+
+const deletedUsersQuantity = () => {
+  return deletedUsers;
 };
 
 // Función que redirige al usuario a la página de productos
