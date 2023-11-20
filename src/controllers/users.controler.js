@@ -416,7 +416,6 @@ async function deleteUsers(req, res, next) {
   console.log("Llego al controlador");
   try {
     const allUsers = await usersService.getAllUsers();
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000); // Fecha y hora actuales menos 5 minutos
 
     const usersToDelete = allUsers.filter((user) => {
       const lastConnection = user.last_connection[0];
@@ -424,14 +423,19 @@ async function deleteUsers(req, res, next) {
 
       // Extrae la fecha y hora del string action
       const dateTimeString = action.replace("Login realizado con éxito ", "");
-      const dateTime = new Date(dateTimeString);
+      const finalDate = dateTimeString.replace(
+        "(hora estándar de Argentina)",
+        ""
+      );
 
-      // Compara la fecha y hora de la última conexión con fiveMinutesAgo
-      return dateTime < fiveMinutesAgo;
+      const date = new Date(finalDate);
+
+      console.log("Fecha y hora: ", date);
     });
 
     // Elimina los usuarios
     for (const user of usersToDelete) {
+      console.log("Eliminando usuario: ", user._id);
       await usersService.deleteUser(user._id);
     }
   } catch (error) {

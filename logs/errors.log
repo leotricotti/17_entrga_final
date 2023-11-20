@@ -367,3 +367,4 @@
 {"level":"error","message":"Error de base de datos: Usuario no encontrado 19/11/2023, 19:49:59"}
 {"level":"error","message":"Error de base de datos: Usuario no encontrado 20/11/2023, 8:43:07"}
 {"level":"error","message":"Error de base de datos: Usuario no encontrado 20/11/2023, 8:43:07"}
+{"level":"error","message":"Error de autenticación. No fue posible verificar el token 20/11/2023, 11:47:45"}
