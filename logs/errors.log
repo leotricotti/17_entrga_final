@@ -363,3 +363,7 @@
 {"level":"error","message":"Error de autenticación. Usuario sin permisos 19/11/2023, 8:47:58"}
 {"level":"error","message":"Error de autenticación. No fue posible verificar el token 19/11/2023, 13:11:29"}
 {"level":"error","message":"Error de autenticación. No fue posible verificar el token 19/11/2023, 18:13:41"}
+{"level":"error","message":"Error de base de datos: Usuario no encontrado 19/11/2023, 18:30:45"}
+{"level":"error","message":"Error de base de datos: Usuario no encontrado 19/11/2023, 19:49:59"}
+{"level":"error","message":"Error de base de datos: Usuario no encontrado 20/11/2023, 8:43:07"}
+{"level":"error","message":"Error de base de datos: Usuario no encontrado 20/11/2023, 8:43:07"}

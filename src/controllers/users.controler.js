@@ -412,38 +412,18 @@ async function addDocumentsToUser(req, res, next) {
 }
 
 // Ruta que elimina los usuarios sin conexión
-async function deleteUnconnectedUsers(req, res, next) {
+async function deleteUsers(req, res, next) {
+  console.log("Llego al controlador");
   try {
-    const result = await usersService.deleteDisconnectedUsers();
-    if (!result) {
-      req.logger.error(
-        `Error de base de datos: Error al eliminar los usuarios sin conexión ${new Date().toLocaleString()}`
-      );
-      CustomError.createError({
-        name: "Error de base de datos",
-        cause: generateSessionErrorInfo(result, EErrors.DATABASE_ERROR),
-        message: "Error al eliminar los usuarios sin conexión",
-        code: EErrors.DATABASE_ERROR,
-      });
-      res
-        .status(404)
-        .json({ message: "Error al eliminar los usuarios sin conexión" });
-    } else {
-      req.logger.info(
-        `Usuarios sin conexión eliminados con éxito ${new Date().toLocaleString()}`
-      );
-      res.json({
-        message: "Usuarios sin conexión eliminados con éxito",
-        data: result,
-      });
-    }
+    const allUsers = await usersService.getAllUsers();
+    console.log(allUsers);
+    // const users = allUsers.filter((user) => user.last_connection === null || user.last_connection === undefined);
   } catch (error) {
     next(error);
   }
 }
 
 export {
-  deleteUnconnectedUsers,
   getAllUsers,
   addDocumentsToUser,
   updateUser,

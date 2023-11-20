@@ -122,7 +122,9 @@ export function generateUsers() {
     email: email,
     password: createHash(faker.internet.password()),
     last_conection: [
-      { action: `Login realizado con éxito ${faker.date.recent({ days: 3 })}` },
+      {
+        action: `Login realizado con éxito ${new Date().toLocaleString()}`,
+      },
     ],
   };
 }

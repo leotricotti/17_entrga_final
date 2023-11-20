@@ -140,11 +140,11 @@ export default class UsersDao {
     }
   };
 
-  // Método asyncrono para eliminar usuarios sin conexión durante 2 días
-  deleteUnconnected = async () => {
+  // Método asyncrono para eliminar usuarios específicos
+  deleteUsers = async (...userIds) => {
     try {
       const respuesta = await usersModel.deleteMany({
-        last_connection: { $lt: new Date(Date.now() - 172800000) },
+        _id: { $in: userIds },
       });
       return respuesta;
     } catch (error) {
