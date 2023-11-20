@@ -121,7 +121,7 @@ export function generateUsers() {
     last_name: lastName,
     email: email,
     password: createHash(faker.internet.password()),
-    last_conection: [
+    last_connection: [
       {
         action: `Login realizado con éxito ${new Date().toLocaleString()}`,
       },

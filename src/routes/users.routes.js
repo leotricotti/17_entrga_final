@@ -6,6 +6,7 @@ import {
   authorization,
 } from "../utils/index.js";
 import {
+  deleteUsers,
   addDocumentsToUser,
   updateUser,
   forgotPassword,
@@ -49,6 +50,6 @@ router.put("/premium/:id", authToken, updateUserRole);
 router.put("/cart", authToken, userCart);
 
 // Ruta que elimina los usuarios sin conección
-router.delete("/deleteUnconnectedUsers");
+router.delete("/deleteUnconnectedUsers", deleteUsers);
 
 export default router;
