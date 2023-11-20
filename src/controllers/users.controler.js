@@ -416,6 +416,7 @@ async function deleteUsers(req, res, next) {
   console.log("Llego al controlador");
   try {
     const allUsers = await usersService.getAllUsers();
+    const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000); // Fecha y hora actuales menos 2 días
 
     const usersToDelete = allUsers.filter((user) => {
       const lastConnection = user.last_connection[0];
@@ -427,16 +428,15 @@ async function deleteUsers(req, res, next) {
         "(hora estándar de Argentina)",
         ""
       );
-
       const date = new Date(finalDate);
 
-      console.log("Fecha y hora: ", date);
+      // Compara la fecha y hora de la última conexión con twoDaysAgo
+      return date < twoDaysAgo;
     });
 
     // Elimina los usuarios
     for (const user of usersToDelete) {
-      console.log("Eliminando usuario: ", user._id);
-      await usersService.deleteUser(user._id);
+      await usersService.deleteManyUsers(user._id);
     }
   } catch (error) {
     next(error);

@@ -142,6 +142,7 @@ export default class UsersDao {
 
   // Método asyncrono para eliminar usuarios específicos
   deleteUsers = async (...userIds) => {
+    console.log(userIds);
     try {
       const respuesta = await usersModel.deleteMany({
         _id: { $in: userIds },
