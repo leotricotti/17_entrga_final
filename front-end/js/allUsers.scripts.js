@@ -5,6 +5,7 @@ const token = localStorage.getItem("token");
 const PORT = localStorage.getItem("port");
 const localPort = localStorage.getItem("localPort");
 const prevUsersQuantity = usersProfile.length;
+let usersDeleted = localStorage.getItem("usersDeleted") || 0;
 
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -49,7 +50,6 @@ const getAllUsers = async () => {
 
 // Función que renderiza el perfil del usuario
 function renderAllUsersProfile() {
-  const usersDeleted = deletedUsersQuantity();
   let html = "";
   html += `
   <div class="row container w-50 d-flex justify-content-around">
@@ -262,6 +262,8 @@ const deleteUsers = async () => {
 
   const result = await response.json();
 
+  localStorage.setItem("usersDeleted", result.data.length);
+
   if (!result.message === "Usuarios eliminados con exito") {
     Swal.fire({
       icon: "error",
@@ -278,8 +280,8 @@ const deleteUsers = async () => {
   } else {
     Swal.fire({
       icon: "success",
-      title: "¡Felicitaciones!",
-      text: "Usuarios eliminados con éxito",
+      title: "Operación realizada con éxito",
+      text: "Los usuarios han sido eliminados",
       confirmButtonText: "Aceptar",
       showClass: {
         popup: "animate__animated animate__zoomIn",
@@ -287,9 +289,8 @@ const deleteUsers = async () => {
       hideClass: {
         popup: "animate__animated animate__zoomOut",
       },
-    }).then((result) => {
-      if (result.isConfirmed) {
-        deletedUsersQuantity();
+    }).then((resulted) => {
+      if (resulted.isConfirmed) {
         window.location.reload();
       }
     });
@@ -298,10 +299,6 @@ const deleteUsers = async () => {
 
 const newQuantity = usersProfile.length;
 const deletedUsers = prevUsersQuantity - newQuantity;
-
-const deletedUsersQuantity = () => {
-  return deletedUsers;
-};
 
 // Función que redirige al usuario a la página de productos
 const goToProducts = () => {

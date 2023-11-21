@@ -55,6 +55,7 @@ const logout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         localStorage.setItem("currentPage", 1);
+        localStorage.removeItem("usersDeleted");
         window.location.href = `http://127.0.0.1:${localPort}/html/index.html`;
       }, 2000);
     }

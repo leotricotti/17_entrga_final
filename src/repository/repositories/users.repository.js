@@ -59,7 +59,6 @@ export default class UsersRepository {
 
   // Metodo asyncrono que elimina usuarios sin conexion
   deleteManyUsers = async (usersIds) => {
-    console.log("Delete Many", usersIds);
     const result = await this.dao.deleteUsers(usersIds);
     return result;
   };
