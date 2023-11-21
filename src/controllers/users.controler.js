@@ -413,11 +413,21 @@ async function addDocumentsToUser(req, res, next) {
 
 // Ruta que elimina los usuarios sin conexión
 async function deleteUsers(req, res, next) {
-  console.log("Llego al controlador");
   try {
     const allUsers = await usersService.getAllUsers();
-    const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000); // Fecha y hora actuales menos 2 días
-
+    if (allUsers.length === 0) {
+      req.logger.error(
+        `Error de base de datos: No hay usuarios registrados ${new Date().toLocaleString()}`
+      );
+      CustomError.createError({
+        name: "Error de base de datos",
+        cause: generateSessionErrorInfo(allUsers, EErrors.DATABASE_ERROR),
+        message: "No hay usuarios registrados",
+        code: EErrors.DATABASE_ERROR,
+      });
+      res.status(404).json({ message: "No hay usuarios registrados" });
+    }
+    const twoDaysAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     const usersToDelete = allUsers.filter((user) => {
       const lastConnection = user.last_connection[0];
       const action = lastConnection.action;
@@ -434,9 +444,21 @@ async function deleteUsers(req, res, next) {
       return date < twoDaysAgo;
     });
 
-    // Elimina los usuarios
-    for (const user of usersToDelete) {
-      await usersService.deleteManyUsers(user._id);
+    const userIdsToDelete = usersToDelete.map((user) => user._id);
+    if (userIdsToDelete.length === 0) {
+      req.logger.info(
+        `No hay usuarios para eliminar ${new Date().toLocaleString()}`
+      );
+      res.json({ message: "No hay usuarios para eliminar" });
+    } else {
+      const result = await usersService.deleteManyUsers(userIdsToDelete);
+      req.logger.info(
+        `Usuarios eliminados con éxito ${new Date().toLocaleString()}`
+      );
+      res.json({
+        message: "Usuarios eliminados con éxito",
+        data: userIdsToDelete,
+      });
     }
   } catch (error) {
     next(error);
