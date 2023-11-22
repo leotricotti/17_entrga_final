@@ -80,7 +80,7 @@ async function forgotPassword(req, res, next) {
               <h2 style="text-align: center; color: #333;">Recuperación de Contraseña</h2>
               <p>Estimado/a ${user[0].first_name},</p>
               <p>Te enviamos este correo electrónico porque solicitaste restablecer tu contraseña. Para completar el proceso por favor sigue las instrucciones:</p>
-              <p><strong>Paso 1:</strong> Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
+              <p><strong>Paso 1:</strong> Haz clic en el siguiente enlace para restablecer tu co ntraseña:</p>
               <p><a href="http://127.0.0.1:5500/html/newPassword.html?token=${passwordToken}" style="text-decoration: none; background-color: #4caf50; color: white; padding: 10px 20px; border-radius: 5px; display: inline-block; margin-top: 10px;">Restablecer Contraseña</a></p>
               <p><strong>Paso 2:</strong> Una vez que hagas clic en el enlace, serás redirigido/a a una página donde podrás crear una nueva contraseña segura para tu cuenta.</p>
               <p>Si no solicitaste restablecer tu contraseña, por favor ignora este mensaje. Tu información de cuenta sigue siendo segura y no se ha visto comprometida.</p>
@@ -429,8 +429,17 @@ async function deleteUsers(req, res, next) {
     }
     const twoDaysAgo = new Date(Date.now() - 48 * 60 * 60 * 1000);
     const usersToDelete = allUsers.filter((user) => {
-      const lastConnection = user.last_connection[0];
-      const action = lastConnection.action;
+      const lastConnection = user.last_connection;
+      let action = "";
+
+      if (lastConnection.length >= 3) {
+        action >= lastConnection[lastConnection.length - 2];
+      } else {
+        action = lastConnection[0];
+      }
+
+      console.log(user);
+      console.log(action);
 
       // Extrae la fecha y hora del string action
       const dateTimeString = action.replace("Login realizado con éxito ", "");
@@ -451,6 +460,25 @@ async function deleteUsers(req, res, next) {
       );
       res.json({ message: "No hay usuarios para eliminar" });
     } else {
+      for (const user of usersToDelete) {
+        const mailer = new MailingService();
+        const sendEmail = await mailer.sendSimpleMail({
+          from: "E-Store",
+          to: user.email,
+          subject: "Usuario eliminado",
+          html: ` 
+          <div style="background-color: #ffffff; max-width: 600px; margin: 0 auto; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);">
+            <h2 style="text-align: center; color: #333;">Eliminación de Cuenta debido a Inactividad</h2>
+            <p>Estimado/a ${user.first_name},</p>
+            <p>Esperamos que este mensaje te encuentre bien. Nos ponemos en contacto contigo para informarte que tu cuenta en nuestro E-commerce ha sido eliminada debido a su falta de actividad.</p>
+            <p>Hemos notado que no te has conectado a tu cuenta en las últimas 48 horas, y lamentablemente, esto ha llevado a la eliminación de tu cuenta de acuerdo con nuestras políticas de inactividad. Queremos recordarte la importancia de mantener tu cuenta activa para garantizar la seguridad y el acceso continuo a nuestros servicios.</p>
+            <p>Si crees que esto ha sido un error o si deseas recuperar tu cuenta, por favor ponte en contacto con nuestro equipo de soporte a través de <a href="#" style="color: #4caf50; text-decoration: none;">Ayuda en linea</a> o llamando al <strong>+54 11 4567-8890</strong> lo antes posible. Estaremos encantados de ayudarte en el proceso de recuperación.</p>
+            <p>Agradecemos tu comprensión y lamentamos cualquier inconveniente que esto pueda haber causado. Valoramos tu participación en nuestra plataforma y esperamos tenerte de vuelta pronto.</p>
+            <p><strong>E-Store</strong><br>
+          </div> 
+              `,
+        });
+      }
       const result = await usersService.deleteManyUsers(userIdsToDelete);
       req.logger.info(
         `Usuarios eliminados con éxito ${new Date().toLocaleString()}`

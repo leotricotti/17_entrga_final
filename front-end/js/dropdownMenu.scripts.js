@@ -129,7 +129,7 @@ const renderDropdownMenu = () => {
     html = `
     <li>
     <button class="btn dropdown-item" onclick="deleteUnConnectedUsers()">
-    <i class="fa-solid fa-user-minus"></i>
+    <i class="fa-solid fa-user"></i>
        Delete Users 
      </button>
     <button class="btn dropdown-item" onclick="gotToRealTimeProducts()">

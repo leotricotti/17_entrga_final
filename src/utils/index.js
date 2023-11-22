@@ -125,6 +125,9 @@ export function generateUsers() {
       {
         action: `Login realizado con éxito ${faker.date.recent({ days: 4 })}`,
       },
+      {
+        action: `Logout realizado con éxito ${faker.date.recent({ days: 4 })}`,
+      },
     ],
   };
 }

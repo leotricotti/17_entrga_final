@@ -261,8 +261,9 @@ const deleteUsers = async () => {
   );
 
   const result = await response.json();
-
-  localStorage.setItem("usersDeleted", result.data.length);
+  if (result.data?.length > 0) {
+    localStorage.setItem("usersDeleted", result.data.length);
+  }
 
   if (!result.message === "Usuarios eliminados con exito") {
     Swal.fire({

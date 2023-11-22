@@ -81,7 +81,7 @@ async function lastConnection(req, res, next) {
     const id = userResult[0]._id;
     const newAction = `${
       action === "login" ? "Login" : "Logout"
-    } realizado con éxito ${new Date().toLocaleString()}`;
+    } realizado con éxito ${new Date()}`;
     const result = await sessionsService.lastConnection(id, newAction);
     if (result.length === 0) {
       req.logger.error(
