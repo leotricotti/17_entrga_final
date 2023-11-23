@@ -261,15 +261,16 @@ const deleteUsers = async () => {
   );
 
   const result = await response.json();
+
   if (result.data?.length > 0) {
     localStorage.setItem("usersDeleted", result.data.length);
   }
 
-  if (!result.message === "Usuarios eliminados con exito") {
+  if (result.message === "No hay usuarios para eliminar") {
     Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: "No se pudo eliminar los usuarios",
+      icon: "success",
+      title: "Felicitaciones",
+      text: "No hay usuarios para eliminar",
       confirmButtonText: "Aceptar",
       showClass: {
         popup: "animate__animated animate__zoomIn",
