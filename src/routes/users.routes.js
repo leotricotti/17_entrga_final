@@ -49,6 +49,9 @@ router.put("/premium/:id", authToken, updateUserRole);
 // Ruta que actualiza el carrito del usuario
 router.put("/cart", authToken, userCart);
 
+// Ruta que elimina un usuario
+router.delete("/:id", authToken, authorization("admin"), deleteUsers);
+
 // Ruta que elimina los usuarios sin conección
 router.delete("/deleteUnconnectedUsers", deleteUsers);
 

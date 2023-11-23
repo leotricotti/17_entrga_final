@@ -140,6 +140,17 @@ export default class UsersDao {
     }
   };
 
+  // Metodo asyncrono para eliminar un usuario
+  deleteOne = async (userId) => {
+    try {
+      const respuesta = await usersModel.findByIdAndDelete(userId);
+      return respuesta;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  };
+
   // Método asyncrono para eliminar usuarios específicos
   deleteUsers = async (userIds) => {
     try {
