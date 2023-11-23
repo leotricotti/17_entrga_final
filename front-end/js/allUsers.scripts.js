@@ -83,10 +83,12 @@ function renderAllUsersProfile() {
             <button
               type="button"
               id="signup-button"
-              class="btn btn-secondary profile-button"
+              class="btn btn-secondary profile-button ${
+                user.role === "admin" ? "disabled" : ""
+              }"
               onclick="updateUserRole('${user.email}', '${user.role}')"
             >
-              Actualizar Role
+              Update Role
             </button>
           </div>
           </div>
