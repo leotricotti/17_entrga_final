@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { finishPurchase } from "../controllers/finishPurchase.controler.js";
+import finishPurchase from "../controllers/finishPurchase.controler.js";
 import {
   getAll,
   getOne,

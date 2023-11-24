@@ -133,10 +133,13 @@ async function deleteProduct(req, res, next) {
 
 // Método asíncrono para actualizar un producto
 async function updateProduct(req, res, next) {
+  console.log("Llego aqui");
   // Extraer el id del producto y los datos del producto de la solicitud
   const { pid } = req.params;
   const { title, description, code, price, stock, category, thumbnail } =
     req.files;
+
+  console.log(req.files);
 
   try {
     // Si no se proporcionan todos los campos requeridos, lanzar un error

@@ -1,11 +1,12 @@
 // Variables globales
 let page = 1;
 let counter = 0;
-let fileCounter = 1;
+let fileCounter = 0;
 const PORT = localStorage.getItem("port");
 const userLocalData = JSON.parse(localStorage.getItem("user"));
 const userName = userLocalData.email;
 const userRoleInfo = userLocalData.role;
+const formData = new FormData();
 
 // Codigo que desabilita el chat para los administradores
 document.addEventListener("DOMContentLoaded", () => {
@@ -103,7 +104,7 @@ userProductImage.addEventListener("change", function (e) {
     Swal.fire({
       icon: "error",
       title: "Oops...",
-      text: "Solo puedes subir 3 imagenes!",
+      text: "Solo puedes subir 1 imagenes!",
       showConfirmButton: true,
       confirmButtonText: "Aceptar",
       showClass: {
@@ -136,6 +137,10 @@ async function handleUpdateProduct(
       category: category,
     };
 
+    for (let key in product) {
+      formData.append(key, product[key]);
+    }
+
     const response = await fetch(
       `http://localhost:${PORT}/api/realTimeProducts/${id}`,
       {
@@ -144,64 +149,51 @@ async function handleUpdateProduct(
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: [JSON.stringify(product), formData],
+        body: formData,
       }
     );
+
     const result = await response.json();
 
-    if (!result.message === "Producto actualizado con éxito") {
-      return Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Algo salió mal! Vuelve a intentarlo",
-        showConfirmButton: true,
-        confirmButtonText: "Aceptar",
-        showClass: {
-          popup: "animate__animated animate__zoomIn",
-        },
-        hideClass: {
-          popup: "animate__animated animate__zoomOut",
-        },
-      });
-    }
+    console.log(result);
 
-    Swal.fire({
-      title: "¿Estás seguro?",
-      text: "¡No podrás revertir esto!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sí, actualizar producto!",
-      cancelButtonText: "Cancelar",
-      showClass: {
-        popup: "animate__animated animate__zoomIn",
-      },
-      hideClass: {
-        popup: "animate__animated animate__zoomOut",
-      },
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: "¡Producto actualizado con éxito!",
-          icon: "success",
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "Aceptar",
-          showClass: {
-            popup: "animate__animated animate__zoomIn",
-          },
-          hideClass: {
-            popup: "animate__animated animate__zoomOut",
-          },
-        }).then((result) => {
-          if (result.isConfirmed) {
-            setTimeout(function () {
-              window.location.reload();
-            }, 500);
-          }
-        });
-      }
-    });
+    // Swal.fire({
+    //   title: "¿Estás seguro?",
+    //   text: "¡No podrás revertir esto!",
+    //   icon: "warning",
+    //   showCancelButton: true,
+    //   confirmButtonColor: "#d33",
+    //   cancelButtonColor: "#3085d6",
+    //   confirmButtonText: "Sí, actualizar producto!",
+    //   cancelButtonText: "Cancelar",
+    //   showClass: {
+    //     popup: "animate__animated animate__zoomIn",
+    //   },
+    //   hideClass: {
+    //     popup: "animate__animated animate__zoomOut",
+    //   },
+    // }).then((result) => {
+    //   if (result.isConfirmed) {
+    //     Swal.fire({
+    //       title: "¡Producto actualizado con éxito!",
+    //       icon: "success",
+    //       confirmButtonColor: "#3085d6",
+    //       confirmButtonText: "Aceptar",
+    //       showClass: {
+    //         popup: "animate__animated animate__zoomIn",
+    //       },
+    //       hideClass: {
+    //         popup: "animate__animated animate__zoomOut",
+    //       },
+    //     }).then((result) => {
+    //       if (result.isConfirmed) {
+    //         setTimeout(function () {
+    //           window.location.reload();
+    //         }, 500);
+    //       }
+    //     });
+    //   }
+    // });
   } catch (error) {
     console.log(error);
   }
@@ -465,12 +457,12 @@ const renderProductImage = (product) => {
   const imageUrl = product.thumbnail[0]?.img1;
   if (
     imageUrl ===
-    "https://freezedepot.com/wp-content/uploads/2023/05/producto-sin-imagen.png"
+    "https://www.hapuricellisa.com.ar/plugins/productos/producto-sin-imagen.png"
   ) {
-    return `<img src="${imageUrl}" alt="img" width="150" class="thumbnail position-absolute me-5 mt-5 end-0 top-0">`;
+    return `<img src="${imageUrl}" alt="img" width="150" class="thumbnail position-absolute me-5 mt-5 end-0 top-0" style="margin-top:130px">`;
   } else {
     const finalUrl = product.thumbnail[0]?.img1.split("public");
-    return `<img src="http://localhost:${PORT}${finalUrl[1]}" alt="img" width="150" class="thumbnail position-absolute me-5 mt-5 end-0 top-0">`;
+    return `<img src="http://localhost:${PORT}${finalUrl[1]}" alt="img" width="150" class="thumbnail position-absolute me-5 mt-5 end-0 top-0" style="margin-top:130px">`;
   }
 };
 

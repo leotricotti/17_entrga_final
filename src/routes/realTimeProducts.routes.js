@@ -26,7 +26,7 @@ router.post(
 //Ruta para actualizar un producto
 router.put(
   "/:pid",
-  uploader.fields([{ name: "userProductImage", maxCount: 3 }]),
+  //uploader.fields([{ name: "userProductImage", maxCount: 3 }]),
   updateProduct
 );
 

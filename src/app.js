@@ -1,36 +1,39 @@
-import express from "express";
-import cors from "cors";
-import mongoose from "mongoose";
-import passport from "passport";
-import config from "./config/config.js";
-import CartsRouter from "./routes/carts.routes.js";
-import UsersRouter from "./routes/users.routes.js";
-import SessionsRouter from "./routes/sessions.routes.js";
-import ProductsRouter from "./routes/products.routes.js";
-import RealTimeProducts from "./routes/realTimeProducts.routes.js";
-import FakerRouter from "./routes/faker.routes.js";
+// Importar módulos necesarios
+import express from "express"; // Framework web para Node.js
+import cors from "cors"; // Middleware para habilitar CORS
+import mongoose from "mongoose"; // ODM para MongoDB
+import passport from "passport"; // Middleware para autenticación
+import config from "./config/config.js"; // Configuración de la aplicación
+import CartsRouter from "./routes/carts.routes.js"; // Rutas para carritos
+import UsersRouter from "./routes/users.routes.js"; // Rutas para usuarios
+import SessionsRouter from "./routes/sessions.routes.js"; // Rutas para sesiones
+import ProductsRouter from "./routes/products.routes.js"; // Rutas para productos
+import RealTimeProducts from "./routes/realTimeProducts.routes.js"; // Rutas para productos en tiempo real
+import FakerRouter from "./routes/faker.routes.js"; // Rutas para datos falsos
 import {
   initializeRegisterStrategy,
   initializeGithubStrategy,
   initializeJwtStrategy,
-} from "./config/passport.config.js";
-import cookieParser from "cookie-parser";
-import { authToken, authorization } from "./utils/index.js";
-import __dirname from "../utils.js";
-import { Server } from "socket.io";
-import errorHandler from "./middlewares/errors/index.js";
-import { addLogger } from "./utils/logger.js";
-import swaggerJSDoc from "swagger-jsdoc";
-import swaggerUIExpress from "swagger-ui-express";
+} from "./config/passport.config.js"; // Estrategias de autenticación de Passport
+import cookieParser from "cookie-parser"; // Middleware para parsear cookies
+import { authToken, authorization } from "./utils/index.js"; // Funciones de autenticación y autorización
+import __dirname from "../utils.js"; // Ruta del directorio actual
+import { Server } from "socket.io"; // Servidor de Socket.io
+import errorHandler from "./middlewares/errors/index.js"; // Middleware para manejo de errores
+import { addLogger } from "./utils/logger.js"; // Función para añadir un logger
+import swaggerJSDoc from "swagger-jsdoc"; // Generador de documentación Swagger
+import swaggerUIExpress from "swagger-ui-express"; // Middleware para servir la UI de Swagger
 
-//Variables
+// Crear una nueva aplicación Express
 const app = express();
+// Configurar el puerto y la URL de MongoDB
 const PORT = config.app.PORT;
 const MONGO_URL = config.mongo.URL;
 
+// Crear un array para almacenar los mensajes
 const messages = [];
 
-// Swagger
+// Configurar las opciones de Swagger
 const swaggerOptions = {
   definition: {
     openapi: "3.0.1",
@@ -47,23 +50,24 @@ const swaggerOptions = {
   apis: [`${__dirname}/docs/**/*.yaml`],
 };
 
+// Generar la documentación de Swagger
 const specs = swaggerJSDoc(swaggerOptions);
 
-// Middlewares
+// Configurar los middlewares
 app.use(cors());
 app.use(addLogger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 
-// Passport
+// Inicializar las estrategias de Passport y configurar los middlewares de Passport y cookie-parser
 initializeRegisterStrategy();
 initializeJwtStrategy();
 initializeGithubStrategy();
 app.use(cookieParser());
 app.use(passport.initialize());
 
-//Función asincrónica para conectar a la base de datos  y chequear si está conectada
+// Función para conectar a MongoDB
 async function enviroment() {
   try {
     await mongoose.connect(MONGO_URL);
@@ -73,9 +77,10 @@ async function enviroment() {
   }
 }
 
+// Conectar a MongoDB
 enviroment();
 
-// Routes
+// Configurar las rutas
 app.use(
   "/api/docs",
   swaggerUIExpress.serve,
@@ -99,23 +104,24 @@ app.use(
 app.use("/api/faker", FakerRouter);
 app.use(errorHandler);
 
-// Ruta para el home
+// Configurar la ruta del home
 app.get("/", (req, res) => {
   res.send({ port: PORT });
 });
 
-// Server
+// Iniciar el servidor HTTP
 const httpServer = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-// Socket.io
+// Configurar Socket.io
 const io = new Server(httpServer, {
   cors: {
     origin: "*",
   },
 });
 
+// Configurar el evento de conexión de Socket.io
 io.on("connection", (socket) => {
   console.log("Nuevo cliente conectado!");
   socket.on("message", (data) => {
