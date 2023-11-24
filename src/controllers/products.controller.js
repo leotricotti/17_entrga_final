@@ -3,131 +3,88 @@ import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enum.js";
 import { generateProductErrorInfo } from "../services/errors/info.js";
 
+// Función para obtener todos los productos
 async function getAll(req, res, next) {
   const { page, sort, category } = req.query;
+
   try {
     let products;
+    let message;
+
+    // Si se proporciona una categoría, obtener productos filtrados por categoría
     if (category) {
       products = await productsService.filteredAllProducts(category);
-      if (products.length === 0) {
-        req.logger.error(
-          `Error de base de datos: Error al obtener los productos filtrados ${new Date().toLocaleString()}`
-        );
-        CustomError.createError({
-          name: "Error de base de datos",
-          cause: generateProductErrorInfo(products, EErrors.DATABASE_ERROR),
-          message,
-          code: EErrors.DATABASE_ERROR,
-        });
-        res.status(500).json({ message: "Error al obtener los productso" });
-      } else {
-        req.logger.info({
-          message: `Productos filtrados con éxito ${new Date().toLocaleString()}`,
-        });
-        res.json({
-          message: "Productos filtrados con éxito",
-          products: products,
-        });
-      }
-    } else if (sort) {
-      products = await productsService.orderedAllProducts(sort);
-      if (products.length === 0) {
-        req.logger.error(
-          `Error de base de datos: Error al obtener los productos ordenados ${new Date().toLocaleString()}`
-        );
-        CustomError.createError({
-          name: "Error de base de datos",
-          cause: generateProductErrorInfo(products, EErrors.DATABASE_ERROR),
-          message,
-          code: EErrors.DATABASE_ERROR,
-        });
-        res
-          .status(500)
-          .json({ message: "Error al obtener los productos ordenados" });
-      } else {
-        req.logger.info({
-          message: `Productos ordenados con éxito ${new Date().toLocaleString()}`,
-        });
-        res.json({
-          message: "Productos ordenados con éxito",
-          products: products,
-        });
-      }
-    } else if (page) {
-      products = await productsService.paginatedAllProducts(page);
-      if (products.length === 0) {
-        req.logger.error(
-          `Error de base de datos: Error al obtener los productos paginados ${new Date().toLocaleString()}`
-        );
-        CustomError.createError({
-          name: "Error de base de datos",
-          cause: generateProductErrorInfo(products, EErrors.DATABASE_ERROR),
-          message,
-          code: EErrors.DATABASE_ERROR,
-        });
-        res
-          .status(500)
-          .json({ message: "Error al obtener los productos paginados" });
-      } else {
-        req.logger.info({
-          message: `Productos paginados con éxito ${new Date().toLocaleString()}`,
-        });
-        res.json({
-          message: "Productos paginados con éxito",
-          products: products.docs,
-        });
-      }
-    } else {
-      products = await productsService.getAllProducts();
-      if (products.length === 0) {
-        req.logger.error(
-          `Error de base de datos: Error al obtener los productos ${new Date().toLocaleString()}`
-        );
-        CustomError.createError({
-          name: "Error de base de datos",
-          cause: generateProductErrorInfo(products, EErrors.DATABASE_ERROR),
-          message,
-          code: EErrors.DATABASE_ERROR,
-        });
-        res.status(500).json({ message: "Error al obtener los productos" });
-      } else {
-        req.logger.info({
-          message: `Productos obtenidos con éxito ${new Date().toLocaleString()}`,
-        });
-        res.json({
-          message: "Productos obtenidos con éxito",
-          products: products,
-        });
-      }
+      message = "Productos filtrados con éxito";
     }
+    // Si se proporciona un valor de ordenación, obtener productos ordenados
+    else if (sort) {
+      products = await productsService.orderedAllProducts(sort);
+      message = "Productos ordenados con éxito";
+    }
+    // Si se proporciona una página, obtener productos paginados
+    else if (page) {
+      products = await productsService.paginatedAllProducts(page);
+      message = "Productos paginados con éxito";
+      products = products.docs; // En caso de paginación, los productos están en la propiedad 'docs'
+    }
+    // Si no se proporciona ninguna de las anteriores, obtener todos los productos
+    else {
+      products = await productsService.getAllProducts();
+      message = "Productos obtenidos con éxito";
+    }
+
+    // Si no se encuentran productos, lanzar un error
+    if (products.length === 0) {
+      req.logger.error(
+        `Error de base de datos: Error al obtener los productos ${new Date().toLocaleString()}`
+      );
+      throw new CustomError({
+        name: "Error de base de datos",
+        cause: generateProductErrorInfo(products, EErrors.DATABASE_ERROR),
+        message,
+        code: EErrors.DATABASE_ERROR,
+      });
+    }
+
+    // Si se encuentran productos, registrar el éxito y enviar la respuesta
+    req.logger.info({ message: `${message} ${new Date().toLocaleString()}` });
+    res.json({ message, products });
   } catch (err) {
+    // Si ocurre un error, pasar al siguiente middleware
     next(err);
   }
 }
 
-// Funcion para obtener un producto por id
+// Función para obtener un producto por id
 async function getOne(req, res, next) {
+  // Extraer el id del producto de los parámetros de la ruta
   const { pid } = req.params;
+
   try {
+    // Intentar obtener el producto de la base de datos
     const product = await productsService.getOneProduct(pid);
+
+    // Si el producto no se encuentra, lanzar un error
     if (product.length === 0) {
       req.logger.error(
         `Error de base de datos: Error al obtener el producto ${new Date().toLocaleString()}`
       );
-      CustomError.createError({
+      throw new CustomError({
         name: "Error de base de datos",
         cause: generateProductErrorInfo(product, EErrors.DATABASE_ERROR),
-        message,
+        message: "Error al obtener el producto",
         code: EErrors.DATABASE_ERROR,
       });
-      res.status(500).json({ message: "Error al obtener el producto" });
-    } else {
+    }
+    // Si el producto se encuentra, enviarlo en la respuesta
+    else {
       req.logger.info({
         message: `Producto obtenido con éxito ${new Date().toLocaleString()}`,
       });
       res.json({ message: "Producto obtenido con éxito", product });
     }
   } catch (err) {
+    // Si ocurre un error, pasar al siguiente middleware
     next(err);
   }
 }

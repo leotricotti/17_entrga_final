@@ -1,51 +1,56 @@
-import { ticketsService } from "../repository/index.js";
-import { cartService } from "../repository/index.js";
-import { productsService } from "../repository/index.js";
+import {
+  ticketsService,
+  cartService,
+  productsService,
+} from "../repository/index.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enum.js";
 import { generateTicketErrorInfo } from "../services/errors/info.js";
 
+// Función para finalizar la compra
 async function finishPurchase(req, res, next) {
+  // Extraer los datos del cuerpo de la solicitud
   const { username, products, amountPurchase } = req.body;
   const { cid } = req.params;
+
   try {
+    // Verificar si todos los datos necesarios están presentes
     if (!username || !amountPurchase || !products || !cid) {
-      req.logger.error(
-        `Error de tipo de dato: Error al finalizar la compra ${new Date().toLocaleString()}`
-      );
-      CustomError.createError({
-        name: "Error de tipo de dato",
-        cause: generateTicketErrorInfo(
-          [username, products, amountPurchase, cid],
-          EErrors.INVALID_TYPES_ERROR
-        ),
-        message: "Error al finalizar la compra",
-        code: EErrors.INVALID_TYPES_ERROR,
-      });
-      res.status(400).json({ message: "Error al finalizar la compra" });
+      // Lanzar un error personalizado si faltan datos
+      throwCustomError("Error de tipo de datos", EErrors.INVALID_TYPES_ERROR, [
+        username,
+        products,
+        amountPurchase,
+        cid,
+      ]);
     }
+
+    // Obtener el carrito de la base de datos
     const cart = await cartService.getOneCart(cid);
+
+    // Verificar si el carrito existe
     if (cart.length === 0) {
-      req.logger.error(
-        `Error de base de datos: Error al finalizar la compra ${new Date().toLocaleString()}`
-      );
-      CustomError.createError({
-        name: "Error de base de datos",
-        cause: generateTicketErrorInfo(cart, EErrors.DATABASE_ERROR),
-        message: "Error al finalizar la compra",
-        code: EErrors.DATABASE_ERROR,
-      });
-      res.status(400).json({ message: "Error al finalizar la compra" });
+      // Lanzar un error personalizado si el carrito no existe
+      throwCustomError("Error de base de datos", EErrors.DATABASE_ERROR, cart);
     }
+
+    // Filtrar los productos que no tienen suficiente stock
     const productWithOutStock = products.filter(
       (product) => product.product.stock < product.quantity
     );
+
+    // Filtrar los productos que tienen suficiente stock
     const productWithStock = products.filter(
-      (product) => product.product.stock > product.quantity
+      (product) => product.product.stock >= product.quantity
     );
-    const totalPurchase = productWithStock.reduce((acc, product) => {
-      return acc + product.product.price * product.quantity * 0.85;
-    }, 0);
+
+    // Calcular el total de la compra
+    const totalPurchase = productWithStock.reduce(
+      (acc, product) => acc + product.product.price * product.quantity * 0.85,
+      0
+    );
+
+    // Actualizar el stock de los productos comprados
     await Promise.all(
       productWithStock.map(async (product) => {
         const newStock = product.product.stock - product.quantity;
@@ -54,69 +59,68 @@ async function finishPurchase(req, res, next) {
         });
       })
     );
-    if (productWithOutStock.length === 0) {
-      cart.products = [];
-      const result = await cartService.updateOneCart(cid, cart);
-      const newTicket = {
-        code: Math.floor(Math.random() * 1000000),
-        purchase_datetime: new Date().toLocaleString(),
-        amount: totalPurchase.toFixed(2),
-        purchaser: username,
-      };
-      const ticket = await ticketsService.createOneTicket(newTicket);
-      if (!ticket) {
-        req.logger.error({
-          message: `Error de base de datos: Error al crear el ticket ${new Date().toLocaleString()}`,
-        });
-        CustomError.createError({
-          name: "Error de base de datos",
-          cause: generateTicketErrorInfo(result, EErrors.DATABASE_ERROR),
-          message: "Error al crear el ticket",
-          code: EErrors.DATABASE_ERROR,
-        });
-        res.status(400).json({ message: "Error al crear el ticket" });
-      }
-      req.logger.info(
-        `Compra realizada con éxito ${new Date().toLocaleString()}`
+
+    // Crear un nuevo ticket
+    const newTicket = {
+      code: Math.floor(Math.random() * 1000000),
+      purchase_datetime: new Date().toLocaleString(),
+      amount: totalPurchase.toFixed(2),
+      purchaser: username,
+    };
+
+    // Guardar el ticket en la base de datos
+    const ticket = await ticketsService.createOneTicket(newTicket);
+
+    // Verificar si el ticket se guardó correctamente
+    if (!ticket) {
+      // Lanzar un error personalizado si el ticket no se guardó
+      throwCustomError(
+        "Error de base de datos",
+        EErrors.DATABASE_ERROR,
+        result
       );
-      res.json({
-        message: "Compra realizada con éxito",
-        data: ticket,
-        products: productWithStock,
-      });
-    } else {
-      cart.products = [...productWithOutStock];
-      const result = await cartService.updateOneCart(cid, cart);
-      const newTicket = {
-        code: Math.floor(Math.random() * 1000000),
-        purchase_datetime: new Date().toLocaleString(),
-        amount: totalPurchase.toFixed(2),
-        purchaser: username,
-      };
-      const ticket = await ticketsService.createOneTicket(newTicket);
-      if (!ticket) {
-        CustomError.createError({
-          name: "Error de base de datos",
-          cause: generateTicketErrorInfo(result, EErrors.DATABASE_ERROR),
-          message: "Error al crear el ticket",
-          code: EErrors.DATABASE_ERROR,
-        });
-        res.status(400).json({ message: "Error al crear el ticket" });
-      }
-      req.logger.info(
-        `Compra realizada con éxito ${new Date().toLocaleString()}`
-      );
-      res.json({
-        message:
-          "Compra realizada con éxito. Los siguientes productos no se pudieron comprar por falta de stock:",
-        data: ticket,
-        remainingProducts: productWithOutStock,
-        products: productWithStock,
-      });
     }
-  } catch (err) {
-    next(err);
+
+    // Registrar la compra exitosa
+    req.logger.info(
+      `Compra realizada con éxito ${new Date().toLocaleString()}`
+    );
+
+    // Actualizar el carrito con los productos que no se pudieron comprar
+    cart.products =
+      productWithOutStock.length === 0 ? [] : [...productWithOutStock];
+
+    // Actualizar el carrito en la base de datos
+    const result = await cartService.updateOneCart(cid, cart);
+
+    // Enviar la respuesta
+    res.json({
+      message:
+        productWithOutStock.length === 0
+          ? "Compra realizada con éxito"
+          : "Compra realizada con éxito. Los siguientes productos no se pudieron comprar",
+      ticket: newTicket,
+      products: productWithOutStock,
+    });
+  } catch (error) {
+    // Pasar el error al siguiente middleware
+    next(error);
   }
 }
 
-export { finishPurchase };
+// Funcion para lanzar errores personalizados
+function throwCustomError(name, errorCode, cause) {
+  req.logger.error(
+    `${name}: Error al finalizar la compra ${new Date().toLocaleString()}`
+  );
+  CustomError.createError({
+    name,
+    cause: generateTicketErrorInfo(cause, errorCode),
+    message: "Error al finalizar la compra",
+    code: errorCode,
+  });
+  res.status(400).json({ message: "Error al finalizar la compra" });
+}
+
+// Exportar controlador
+export default finishPurchase;
