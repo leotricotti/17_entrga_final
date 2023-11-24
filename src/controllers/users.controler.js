@@ -571,6 +571,7 @@ async function deleteUser(req, res, next) {
 
     // Busca al usuario en la base de datos
     const user = await usersService.getOneUser(uid);
+    const userId = user[0]._id;
 
     // Si el usuario no existe, registra un error y devuelve un mensaje
     if (user.length === 0) {
@@ -587,7 +588,7 @@ async function deleteUser(req, res, next) {
     }
 
     // Si el usuario existe, elimina el usuario
-    const result = await usersService.deleteOneUser(uid);
+    const result = await usersService.deleteOneUser(userId);
 
     // Si la eliminación falla, registra un error y devuelve un mensaje
     if (!result) {
@@ -607,7 +608,10 @@ async function deleteUser(req, res, next) {
     req.logger.info(
       `Usuario eliminado con éxito ${new Date().toLocaleString()}`
     );
-    return;
+    return res.json({
+      message: "Usuario eliminado con éxito.",
+      data: result,
+    });
   } catch (error) {
     // Si ocurre un error, pasa el error al manejador de errores
     next(error);

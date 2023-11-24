@@ -7,6 +7,7 @@ import {
 } from "../utils/index.js";
 import {
   deleteUsers,
+  deleteUser,
   addDocumentsToUser,
   updateUser,
   forgotPassword,
@@ -50,7 +51,12 @@ router.put("/premium/:id", authToken, updateUserRole);
 router.put("/cart", authToken, userCart);
 
 // Ruta que elimina un usuario
-router.delete("/:id", authToken, authorization("admin"), deleteUsers);
+router.delete(
+  "/userDelete/:uid",
+  authToken,
+  authorization("admin"),
+  deleteUser
+);
 
 // Ruta que elimina los usuarios sin conección
 router.delete("/deleteUnconnectedUsers", deleteUsers);

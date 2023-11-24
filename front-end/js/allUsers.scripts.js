@@ -24,7 +24,7 @@ const getAllUsers = async () => {
 
     const result = await response.json();
     usersProfile.push(...result.data);
-    if (result.message !== "Usuarios enviados al cliente con éxito") {
+    if (result.message !== "Usuarios enviados al cliente con éxito.") {
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -80,16 +80,26 @@ function renderAllUsersProfile() {
               <span class="text-black-50">${user.email}</span>
             </div>
             <div class="mb-5  text-center">
-            <button
-              type="button"
-              id="signup-button"
-              class="btn btn-secondary profile-button ${
-                user.role === "admin" ? "disabled" : ""
-              }"
-              onclick="updateUserRole('${user.email}', '${user.role}')"
-            >
-              Update Role
-            </button>
+              <button
+                type="button"
+                id="signup-button"
+                class="btn btn-secondary profile-button mb-3 ${
+                  user.role === "admin" ? "disabled" : ""
+                }"
+                onclick="updateUserRole('${user.email}', '${user.role}')"
+              >
+                Update Role
+              </button>
+              <button
+                type="button"
+                id="delete-user-button"
+                class="btn btn-secondary profile-button ${
+                  user.role === "admin" ? "disabled" : ""
+                }"
+                onclick="getUserToDelete('${user.email}')"
+              >
+                Delete Users
+              </button>
           </div>
           </div>
           <div class="col-md-7 border-right">
@@ -189,7 +199,7 @@ const sendNewRoleToServer = async (userId, newRoleData) => {
 
   const result = await response.json();
 
-  if (!result.message === "Rol actualizado con exito") {
+  if (!result.message === "Rol actualizado con exito.") {
     Swal.fire({
       icon: "error",
       title: "Oops...",
@@ -220,6 +230,81 @@ const sendNewRoleToServer = async (userId, newRoleData) => {
       }
     });
   }
+};
+
+// Función que elimina un usuario
+const userToDelete = async (userId) => {
+  const token = localStorage.getItem("token");
+  const PORT = localStorage.getItem("port");
+
+  const response = await fetch(
+    `http://localhost:${PORT}/api/users/userDelete/${userId}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  const result = await response.json();
+  showSpinner(usersProfile);
+
+  if (!result.message === "Usuario eliminado con exito.") {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "No se pudo eliminar el usuario",
+      confirmButtonText: "Aceptar",
+      showClass: {
+        popup: "animate__animated animate__zoomIn",
+      },
+      hideClass: {
+        popup: "animate__animated animate__zoomOut",
+      },
+    });
+  } else {
+    Swal.fire({
+      icon: "success",
+      title: "¡Felicitaciones!",
+      text: "Usuario eliminado con éxito",
+      confirmButtonText: "Aceptar",
+      showClass: {
+        popup: "animate__animated animate__zoomIn",
+      },
+      hideClass: {
+        popup: "animate__animated animate__zoomOut",
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.reload();
+      }
+    });
+  }
+};
+
+const getUserToDelete = (userId) => {
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: "¡Estás a punto de eliminar el usuario!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: `Sí, eliminar`,
+    cancelButtonText: "Cancelar",
+    showClass: {
+      popup: "animate__animated animate__zoomIn",
+    },
+    hideClass: {
+      popup: "animate__animated animate__zoomOut",
+    },
+  }).then((result) => {
+    if (result.isConfirmed) {
+      userToDelete(userId);
+    }
+  });
 };
 
 // Función que elimina los usuarios desconectad
@@ -268,7 +353,7 @@ const deleteUsers = async () => {
     localStorage.setItem("usersDeleted", result.data.length);
   }
 
-  if (result.message === "No hay usuarios para eliminar") {
+  if (result.message === "No hay usuarios para eliminar.") {
     Swal.fire({
       icon: "success",
       title: "Felicitaciones",
