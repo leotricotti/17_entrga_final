@@ -136,13 +136,10 @@ async function updateProduct(req, res, next) {
   console.log("Llego aqui");
   // Extraer el id del producto y los datos del producto de la solicitud
   const { pid } = req.params;
-  const { title, description, code, price, stock, category, thumbnail } =
-    req.files;
-
-  console.log(req.files);
+  const { title, description, code, price, stock, category } = req.body;
 
   try {
-    // Si no se proporcionan todos los campos requeridos, lanzar un error
+    //Si no se proporcionan todos los campos requeridos, lanzar un error
     if (!title || !description || !price || !code || !stock) {
       const data = { title, description, code, price, stock, category };
       req.logger.error(
@@ -156,7 +153,7 @@ async function updateProduct(req, res, next) {
       });
     }
 
-    // Crear el objeto del producto
+    //Crear el objeto del producto
     const product = {
       title,
       description,
@@ -164,15 +161,12 @@ async function updateProduct(req, res, next) {
       price,
       stock,
       category,
-      thumbnails: thumbnail
-        ? thumbnail.map((file) => file.filename)
-        : undefined,
     };
 
-    // Intentar actualizar el producto en la base de datos
+    //Intentar actualizar el producto en la base de datos
     const result = await productsService.updateOneProduct(pid, product);
 
-    // Si el producto no se actualiza correctamente, lanzar un error
+    //   Si el producto no se actualiza correctamente, lanzar un error
     if (!result) {
       req.logger.error(
         `Error de base de datos: Error al actualizar el producto ${new Date().toLocaleString()}`
@@ -185,7 +179,7 @@ async function updateProduct(req, res, next) {
       });
     }
 
-    // Si el producto se actualiza correctamente, enviar una respuesta exitosa
+    //Si el producto se actualiza correctamente, enviar una respuesta exitosa
     req.logger.info(
       `Producto actualizado con éxito ${new Date().toLocaleString()}`
     );
@@ -195,7 +189,7 @@ async function updateProduct(req, res, next) {
       data: productUpdated,
     });
   } catch (err) {
-    // Si ocurre un error, pasar al siguiente middleware
+    //Si ocurre un error, pasar al siguiente middleware
     next(err);
   }
 }

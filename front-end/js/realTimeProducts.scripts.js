@@ -128,7 +128,7 @@ async function handleUpdateProduct(
   category
 ) {
   try {
-    const product = {
+    const updateProduct = {
       title: title,
       description: description,
       code: code,
@@ -137,9 +137,8 @@ async function handleUpdateProduct(
       category: category,
     };
 
-    for (let key in product) {
-      formData.append(key, product[key]);
-    }
+    console.log(updateProduct);
+    console.log(id);
 
     const response = await fetch(
       `http://localhost:${PORT}/api/realTimeProducts/${id}`,
@@ -149,51 +148,49 @@ async function handleUpdateProduct(
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: formData,
+        body: JSON.stringify(updateProduct),
       }
     );
 
     const result = await response.json();
 
-    console.log(result);
-
-    // Swal.fire({
-    //   title: "¿Estás seguro?",
-    //   text: "¡No podrás revertir esto!",
-    //   icon: "warning",
-    //   showCancelButton: true,
-    //   confirmButtonColor: "#d33",
-    //   cancelButtonColor: "#3085d6",
-    //   confirmButtonText: "Sí, actualizar producto!",
-    //   cancelButtonText: "Cancelar",
-    //   showClass: {
-    //     popup: "animate__animated animate__zoomIn",
-    //   },
-    //   hideClass: {
-    //     popup: "animate__animated animate__zoomOut",
-    //   },
-    // }).then((result) => {
-    //   if (result.isConfirmed) {
-    //     Swal.fire({
-    //       title: "¡Producto actualizado con éxito!",
-    //       icon: "success",
-    //       confirmButtonColor: "#3085d6",
-    //       confirmButtonText: "Aceptar",
-    //       showClass: {
-    //         popup: "animate__animated animate__zoomIn",
-    //       },
-    //       hideClass: {
-    //         popup: "animate__animated animate__zoomOut",
-    //       },
-    //     }).then((result) => {
-    //       if (result.isConfirmed) {
-    //         setTimeout(function () {
-    //           window.location.reload();
-    //         }, 500);
-    //       }
-    //     });
-    //   }
-    // });
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "¡No podrás revertir esto!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, actualizar producto!",
+      cancelButtonText: "Cancelar",
+      showClass: {
+        popup: "animate__animated animate__zoomIn",
+      },
+      hideClass: {
+        popup: "animate__animated animate__zoomOut",
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "¡Producto actualizado con éxito!",
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "Aceptar",
+          showClass: {
+            popup: "animate__animated animate__zoomIn",
+          },
+          hideClass: {
+            popup: "animate__animated animate__zoomOut",
+          },
+        }).then((result) => {
+          if (result.isConfirmed) {
+            setTimeout(function () {
+              window.location.reload();
+            }, 500);
+          }
+        });
+      }
+    });
   } catch (error) {
     console.log(error);
   }
@@ -276,15 +273,6 @@ const getProductToUpdate = async (id) => {
               value = "${product.category}"
             />
           </div>
-          <div class="mb-3">
-            <label for="thumbnail" class="form-label"> Imagen: </label>
-            <input
-              type="text"
-              class="form-control"
-              id="thumbnail"
-              value = "${product.thumbnail[0]["img1"]}"
-            />
-          </div>
           <button type="submit" class="btn btn-primary" id="submit" >
             Actualizar 
           </button>
@@ -294,7 +282,7 @@ const getProductToUpdate = async (id) => {
   const updateProductData = document.getElementById("update-product-form");
   updateProductData.addEventListener("submit", (e) => {
     e.preventDefault();
-    const { title, description, code, price, stock, category, thumbnail } =
+    const { title, description, code, price, stock, category } =
       updateProductData.elements;
     handleUpdateProduct(
       product._id,
@@ -437,7 +425,7 @@ const getProducts = async (page) => {
 const paginatedProducts = async (pages) => {
   const products = await getProducts();
   const reverseProducts = products.products.reverse();
-  const productsPaginated = reverseProducts.splice(0, pages * 10);
+  const productsPaginated = reverseProducts.slice(0, page * 10);
   return productsPaginated;
 };
 
@@ -459,10 +447,10 @@ const renderProductImage = (product) => {
     imageUrl ===
     "https://www.hapuricellisa.com.ar/plugins/productos/producto-sin-imagen.png"
   ) {
-    return `<img src="${imageUrl}" alt="img" width="150" class="thumbnail position-absolute me-5 mt-5 end-0 top-0" style="margin-top:130px">`;
+    return `<img src="${imageUrl}" alt="img" width="150" class="thumbnail position-absolute me-5 end-0 top-0" style="margin-top:120px">`;
   } else {
     const finalUrl = product.thumbnail[0]?.img1.split("public");
-    return `<img src="http://localhost:${PORT}${finalUrl[1]}" alt="img" width="150" class="thumbnail position-absolute me-5 mt-5 end-0 top-0" style="margin-top:130px">`;
+    return `<img src="http://localhost:${PORT}${finalUrl[1]}" alt="img" width="150" class="thumbnail position-absolute me-5 end-0 top-0" style="margin-top:120px">`;
   }
 };
 

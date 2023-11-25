@@ -24,11 +24,7 @@ router.post(
 );
 
 //Ruta para actualizar un producto
-router.put(
-  "/:pid",
-  //uploader.fields([{ name: "userProductImage", maxCount: 3 }]),
-  updateProduct
-);
+router.put("/:pid", updateProduct);
 
 //Ruta para eliminar un producto
 router.delete("/:pid", deleteProduct);
