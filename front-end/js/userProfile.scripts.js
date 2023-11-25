@@ -64,26 +64,6 @@ const addUserProfileImage = async (userProfileImage) => {
   );
 
   const result = await response.json();
-
-  if (result.message === "Documento agregado con éxito") {
-    Swal.fire({
-      icon: "success",
-      title: "¡Imagen de perfil actualizada!",
-      confirmButtonText: "Aceptar",
-
-      showClass: {
-        popup: "animate__animated animate__zoomIn",
-      },
-      hideClass: {
-        popup: "animate__animated animate__zoomOut",
-      },
-    }).then((resulted) => {
-      if (resulted.isConfirmed) {
-        localStorage.setItem("user", JSON.stringify(result.data));
-        window.location.reload();
-      }
-    });
-  }
   return result;
 };
 
@@ -99,7 +79,7 @@ const checkUserProfileImage = () => {
       "/profiles/" + referenceParts[referenceParts.length - 1];
     return `<img class="rounded-circle mt-5" width="150px" height="150px" style="object-fit: contain" src="http://localhost:${PORT}${finalReference}" />`;
   } else {
-    return `<img class="rounded-circle mt-5" width="150px" src="../img/user-avatar.svg" />`;
+    return `<img class="rounded-circle mt-5" width="150px" height="150px" src="../img/user-avatar.png" />`;
   }
 };
 
@@ -125,6 +105,7 @@ function renderUserProfile() {
                     right: 20px;
                   "
                   id="user-profile-image"
+                  onclick="${addUserProfileImage()}"
                 >
                   <input type="file" class="form-control d-none" />
                   <i class="fas fa-camera"></i>
@@ -134,6 +115,7 @@ function renderUserProfile() {
         user.last_name
       }</span>
               <span class="text-black-50">${user.email}</span>
+              <div id="link-container"></div>
             </div>
           </div>
           <div class="col-md-7 border-right">
@@ -247,58 +229,21 @@ function renderUserProfile() {
 
       fileInput.addEventListener("change", () => {
         const file = fileInput.files[0];
+
+        // Crear un enlace y una imagen para el archivo subido
+        const linkContainer = document.getElementById("link-container");
+        const url = URL.createObjectURL(file);
+        const link = document.createElement("a");
+        link.target = "_blank";
+        link.classList.add("link");
+        link.href = url;
+        link.textContent = "Ver imagen";
+        linkContainer.appendChild(link);
+
         addUserProfileImage(file);
       });
 
       fileInput.click();
-    });
-  }
-
-  // Funcion que cambia el input por un enlace cuando el usuario sube un documento
-  const documentInput = document.getElementById("user-id-document");
-  const documentInput1 = document.getElementById("user-address-document");
-  const documentInput2 = document.getElementById("user-count-document");
-  const linkContainer = document.getElementById("link-container");
-  const linkContainer1 = document.getElementById("link-container-one");
-  const linkContainer2 = document.getElementById("link-container-two");
-
-  if (documentInput) {
-    documentInput.addEventListener("change", () => {
-      documentInput.classList.add("d-none");
-      const url = URL.createObjectURL(documentInput.files[0]);
-      const link = document.createElement("a");
-      link.target = "_blank";
-      link.classList.add("link-offset-2");
-      link.href = url;
-      link.textContent = "Ver imagen";
-      linkContainer.appendChild(link);
-    });
-  }
-
-  if (documentInput1) {
-    documentInput1.addEventListener("change", () => {
-      documentInput1.classList.add("d-none");
-      const url = URL.createObjectURL(documentInput1.files[0]);
-      const link = document.createElement("a");
-      link.target = "_blank";
-      link.classList.add("link-offset-2");
-      link.href = url;
-      link.textContent = "Ver imagen";
-      linkContainer1.appendChild(link);
-    });
-  }
-
-  if (documentInput2) {
-    documentInput2.addEventListener("change", () => {
-      documentInput2.classList.add("d-none");
-      const url = URL.createObjectURL(documentInput2.files[0]);
-      const link = document.createElement("a");
-      link.target = "_blank";
-      link.classList.add("link-offset-2");
-      link.classList.add("text-decoration-underline");
-      link.href = url;
-      link.textContent = "Ver imagen";
-      linkContainer2.appendChild(link);
     });
   }
 }
@@ -318,15 +263,6 @@ userProfileForm.addEventListener("submit", (e) => {
   const city = document.getElementById("city").value;
   const state = document.getElementById("state").value;
   const zip_code = document.getElementById("zip_code").value;
-  const userIdInput = document.getElementById("user-id-document");
-  const userAddressInput = document.getElementById("user-address-document");
-  const userCountInput = document.getElementById("user-count-document");
-
-  const userIdDocument = userIdInput ? userIdInput.files[0] : null;
-  const userAddressDocument = userAddressInput
-    ? userAddressInput.files[0]
-    : null;
-  const userCountDocument = userCountInput ? userCountInput.files[0] : null;
 
   const userData = {
     first_name,
@@ -353,22 +289,6 @@ userProfileForm.addEventListener("submit", (e) => {
   }).then((result) => {
     if (result.isConfirmed) {
       sendProfileData(userData);
-      sendDocumentsData(userIdDocument, userAddressDocument, userCountDocument);
-
-      Swal.fire({
-        icon: "success",
-        title: "¡Datos guardados correctamente!",
-        confirmButtonText: "Aceptar",
-        showClass: {
-          popup: "animate__animated animate__zoomIn",
-        },
-        hideClass: {
-          popup: "animate__animated animate__zoomOut",
-        },
-      }).then(() => {
-        renderDropdownMenu();
-        window.location.reload();
-      });
     }
   });
 });
@@ -392,6 +312,42 @@ async function sendProfileData(data) {
   );
 
   const result = await response.json();
+
+  console.log(result);
+
+  if (result.message === "Perfil actualizado con éxito.") {
+    Swal.fire({
+      icon: "success",
+      title: "¡Datos actualizados!",
+      confirmButtonText: "Aceptar",
+
+      showClass: {
+        popup: "animate__animated animate__zoomIn",
+      },
+      hideClass: {
+        popup: "animate__animated animate__zoomOut",
+      },
+    }).then((resulted) => {
+      if (resulted.isConfirmed) {
+        localStorage.setItem("user", JSON.stringify(result.data));
+        window.location.reload();
+      }
+    });
+  } else {
+    Swal.fire({
+      icon: "error",
+      title: "¡Error!",
+      text: "No se pudieron actualizar los datos.",
+      confirmButtonText: "Aceptar",
+
+      showClass: {
+        popup: "animate__animated animate__zoomIn",
+      },
+      hideClass: {
+        popup: "animate__animated animate__zoomOut",
+      },
+    });
+  }
 
   return result;
 }
