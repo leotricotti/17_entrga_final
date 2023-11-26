@@ -5,6 +5,7 @@ import {
   generateProductErrorInfo,
   generateAuthErrorInfo,
 } from "../services/errors/info.js";
+import MailingService from "../services/mailing.js";
 
 // Método asíncrono para guardar un producto
 async function saveProduct(req, res, next) {
@@ -101,9 +102,7 @@ async function deleteProduct(req, res, next) {
         message: "Error al eliminar el producto",
         code: EErrors.AUTH_ERROR,
       });
-    }
-    // Si el usuario es el propietario del producto o no es premium, intentar eliminar el producto
-    else {
+    } else {
       const result = await productsService.deleteOneProduct(pid);
 
       // Si el producto no se elimina correctamente, lanzar un error
@@ -117,13 +116,29 @@ async function deleteProduct(req, res, next) {
           message: "Error al eliminar el producto",
           code: EErrors.DATABASE_ERROR,
         });
+      } else {
+        const mailer = new MailingService();
+        const sendEmail = await mailer.sendSimpleMail({
+          from: "E-Store",
+          to: user.email,
+          subject: "Usuario eliminado",
+          html: `
+          <div style="background-color: #ffffff; max-width: 600px; margin: 0 auto; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);">
+              <h2 style="text-align: center; color: #333;">Eliminación de Producto</h2>
+              <p>Estimado/a ${user.first_name},</p>
+              <>Esperamos que este mensaje te encuentre bien. Nos dirigimos a ti para informarte que el producto que creaste en nuestro E-commerce ha sido eliminado de acuerdo con nuestras políticas internas.</p>
+              <p>En caso de que esto haya sido un error o si deseas obtener más detalles sobre la eliminación de tu producto, por favor ponte en contacto con nuestro equipo de soporte a través de <a href="#" style="color: #4caf50; text-decoration: none;">Ayuda en línea</a> o llamando al <strong>+54 11 4567-8890</strong> lo antes posible. Estaremos encantados de asistirte en cualquier consulta que puedas tener.</p>
+              <p>Agradecemos tu comprensión y lamentamos cualquier inconveniente que esta situación pueda haber causado. Valoramos tu participación en nuestra plataforma y esperamos seguir colaborando contigo en el futuro.</p>
+              <p><strong>E-Store</strong><br>
+          </div>
+            `,
+        });
+        // Si el producto se elimina correctamente, enviar una respuesta exitosa
+        req.logger.info(
+          `Producto eliminado con éxito ${new Date().toLocaleString()}`
+        );
+        res.json({ message: "Producto eliminado con éxito", data: result });
       }
-
-      // Si el producto se elimina correctamente, enviar una respuesta exitosa
-      req.logger.info(
-        `Producto eliminado con éxito ${new Date().toLocaleString()}`
-      );
-      res.json({ message: "Producto eliminado con éxito", data: result });
     }
   } catch (err) {
     // Si ocurre un error, pasar al siguiente middleware

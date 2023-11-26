@@ -2,15 +2,12 @@
 let page = 1;
 let counter = 0;
 let fileCounter = 0;
-const PORT = localStorage.getItem("port");
-const userLocalData = JSON.parse(localStorage.getItem("user"));
-const userName = userLocalData.email;
-const userRoleInfo = userLocalData.role;
 const formData = new FormData();
 
 // Codigo que desabilita el chat para los administradores
 document.addEventListener("DOMContentLoaded", () => {
-  if (userRoleInfo === "admin") {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user.role === "admin") {
     document.getElementById("chat-section").classList.add("d-none");
   }
 });
@@ -21,6 +18,7 @@ function generateProductCode() {
   return code;
 }
 
+// Funcion que crea el input de codigo de producto
 function createRandomCodeInput() {
   const getCodeInput = document.getElementById("code-container");
   getCodeInput.innerHTML = "";
@@ -127,6 +125,8 @@ async function handleUpdateProduct(
   stock,
   category
 ) {
+  const PORT = localStorage.getItem("port");
+
   try {
     const updateProduct = {
       title: title,
@@ -136,9 +136,6 @@ async function handleUpdateProduct(
       stock: stock,
       category: category,
     };
-
-    console.log(updateProduct);
-    console.log(id);
 
     const response = await fetch(
       `http://localhost:${PORT}/api/realTimeProducts/${id}`,
@@ -199,6 +196,7 @@ async function handleUpdateProduct(
 //Codigo los datos del producto y los muestre en el formulario
 const getProductToUpdate = async (id) => {
   const updateProductForm = document.getElementById("update-product-container");
+  const PORT = localStorage.getItem("port");
 
   const response = await fetch(
     `http://localhost:${PORT}/api/realTimeProducts/${id}`,
@@ -302,6 +300,12 @@ const getProductToUpdate = async (id) => {
 async function handleSubmit(e) {
   e.preventDefault();
 
+  let owner = "";
+  const PORT = localStorage.getItem("port");
+  const userLocalData = JSON.parse(localStorage.getItem("user"));
+  const userName = userLocalData.email;
+  const userRole = userLocalData.role;
+
   const { title, description, code, price, stock, category } = form.elements;
   if (
     !title.value ||
@@ -325,6 +329,12 @@ async function handleSubmit(e) {
       },
     });
   } else {
+    if (userRole === "premium") {
+      owner = userName;
+    } else {
+      owner = userRole;
+    }
+
     const product = {
       title: title.value,
       description: description.value,
@@ -332,7 +342,7 @@ async function handleSubmit(e) {
       price: price.value,
       stock: stock.value,
       category: category.value,
-      owner: userRoleInfo,
+      owner: owner,
     };
     formData.append("newProduct", JSON.stringify(product));
     const response = await fetch(
@@ -385,6 +395,7 @@ async function handleSubmit(e) {
 }
 
 const getProducts = async (page) => {
+  const PORT = localStorage.getItem("port");
   try {
     const result = await fetch(
       `http://localhost:${PORT}/api/realTimeProducts`,
@@ -442,6 +453,7 @@ const addProductBtn = () => {
 
 // Función que define que imagen mostrar en el producto
 const renderProductImage = (product) => {
+  const PORT = localStorage.getItem("port");
   const imageUrl = product.thumbnail[0]?.img1;
   if (
     imageUrl ===
@@ -456,6 +468,7 @@ const renderProductImage = (product) => {
 
 // Función para actualizar la lista de productos
 async function updateProductList() {
+  const userData = JSON.parse(localStorage.getItem("user"));
   const productList = document.getElementById("products-list");
   productList.innerHTML = "";
   try {
@@ -498,9 +511,9 @@ async function updateProductList() {
     const updateBtns = document.querySelectorAll(".update-product-btn");
 
     deleteBtns.forEach((btn, index) => {
-      if (userRoleInfo === "premium" && products[index].owner === "premium") {
+      if (products[index].owner === userData.email) {
         btn.disabled = false;
-      } else if (userRoleInfo === "admin") {
+      } else if (userData.owner === "admin") {
         btn.disabled = false;
       } else {
         btn.disabled = true;
@@ -508,9 +521,9 @@ async function updateProductList() {
     });
 
     updateBtns.forEach((btn, index) => {
-      if (userRoleInfo === "premium" && products[index].owner === "premium") {
+      if (products[index].owner === userData.email) {
         btn.disabled = false;
-      } else if (userRoleInfo === "admin") {
+      } else if (userData.owner === "admin") {
         btn.disabled = false;
       } else {
         btn.disabled = true;
@@ -527,6 +540,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Eliminar un producto de la lista de productos
 function eliminarProducto(id) {
+  const PORT = localStorage.getItem("port");
   Swal.fire({
     title: "¿Estás seguro?",
     text: "No podrás revertir esta acción!",

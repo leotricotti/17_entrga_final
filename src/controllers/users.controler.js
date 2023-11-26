@@ -687,8 +687,7 @@ async function deleteUsers(req, res, next) {
         </div>
             `,
         });
-
-        // Si el envío del correo falla, registra un error y devuelve un mensaje
+        // Elimina los usuarios y envia confirmación al front
         const result = await usersService.deleteManyUsers(userIdsToDelete);
         req.logger.info(
           `Usuarios eliminados con éxito ${new Date().toLocaleString()}`
