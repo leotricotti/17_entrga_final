@@ -1,15 +1,11 @@
 //Variables globales
-const userProfile = [];
 const userProfileForm = document.getElementById("user-profile-form");
 const addDocumentsForm = document.getElementById("add-documents-form");
-const token = localStorage.getItem("token");
-const PORT = localStorage.getItem("port");
-const localPort = localStorage.getItem("localPort");
 
 // Función que captura la información del usuario y la almacena en el local storage
 const getUser = async () => {
-  const premium = "premium";
-
+  const token = localStorage.getItem("token");
+  const PORT = localStorage.getItem("port");
   try {
     const response = await fetch(`http://localhost:${PORT}/api/users/current`, {
       method: "GET",
@@ -21,21 +17,11 @@ const getUser = async () => {
 
     const result = await response.json();
 
-    userProfile.push(result.data);
+    const stopSpinner = [result.data];
 
-    if (result.length > 0 || result.data) {
+    if (result.data) {
       localStorage.setItem("user", JSON.stringify(result.data));
-      showSpinner(userProfile);
-    }
-
-    if (
-      result.data.documents.length > 0 &&
-      result.data.documents.some(
-        (document) => document.name !== "userProfileImage"
-      ) &&
-      result.data.role === "user"
-    ) {
-      updateUserRole(premium);
+      showSpinner(stopSpinner);
     }
 
     renderUserProfile();
@@ -48,6 +34,9 @@ const getUser = async () => {
 
 // Función que personaliza la imagen de usuario
 const addUserProfileImage = async (userProfileImage) => {
+  const userProfile = [JSON.parse(localStorage.getItem("user"))];
+  const token = localStorage.getItem("token");
+  const PORT = localStorage.getItem("port");
   const userId = userProfile[0].email;
   const formData = new FormData();
   formData.append("userProfileImage", userProfileImage);
@@ -69,6 +58,8 @@ const addUserProfileImage = async (userProfileImage) => {
 
 // Función que compruba si el usuario subió una imagen de perfil
 const checkUserProfileImage = () => {
+  const PORT = localStorage.getItem("port");
+  const userProfile = [JSON.parse(localStorage.getItem("user"))];
   const userImage = userProfile[0].documents.filter(
     (document) => document.name === "userProfileImage"
   );
@@ -85,6 +76,7 @@ const checkUserProfileImage = () => {
 
 // Función que renderiza el perfil del usuario
 function renderUserProfile() {
+  const userProfile = [JSON.parse(localStorage.getItem("user"))];
   let html = "";
 
   html += `
@@ -295,6 +287,9 @@ userProfileForm.addEventListener("submit", (e) => {
 
 // Función que envía los datos del perfil del usuario al servidor
 async function sendProfileData(data) {
+  const userProfile = [JSON.parse(localStorage.getItem("user"))];
+  const token = localStorage.getItem("token");
+  const PORT = localStorage.getItem("port");
   const userId = userProfile[0].email;
   const response = await fetch(
     `http://localhost:${PORT}/api/users/userProfile`,
@@ -312,8 +307,6 @@ async function sendProfileData(data) {
   );
 
   const result = await response.json();
-
-  console.log(result);
 
   if (result.message === "Perfil actualizado con éxito.") {
     Swal.fire({
@@ -354,5 +347,6 @@ async function sendProfileData(data) {
 
 // Función que redirige al usuario a la página de productos
 const goToProducts = () => {
+  const localPort = localStorage.getItem("localPort");
   window.location.href = `http://127.0.0.1:${localPort}/html/products.html`;
 };

@@ -33,7 +33,6 @@ const checkUserProfile = () => {
     loadUserProfile[0].city == "" ||
     loadUserProfile[0].state == "" ||
     loadUserProfile[0].zip_code == "" ||
-    loadUserProfile[0].documents.length < 2
   ) {
     showIncompleteProfileMessage();
   }

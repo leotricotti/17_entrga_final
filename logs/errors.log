@@ -373,3 +373,4 @@
 {"level":"error","message":"Error de autenticación. No fue posible verificar el token 23/11/2023, 11:35:02"}
 {"level":"error","message":"Error de autenticación. No fue posible verificar el token 23/11/2023, 12:36:19"}
 {"level":"error","message":"Error de tipo de dato: Error al eliminar el usuario. Faltan datos. 23/11/2023, 12:49:32"}
+{"level":"error","message":"Error de base de datos: Usuario no encontrado. 26/11/2023, 9:07:14"}
