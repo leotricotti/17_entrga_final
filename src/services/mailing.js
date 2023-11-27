@@ -21,7 +21,7 @@ export default class MailingService {
     html,
     attachements = [],
   }) => {
-    let result = await this.client.sendMail({
+    let result = this.client.sendMail({
       from,
       to,
       subject,

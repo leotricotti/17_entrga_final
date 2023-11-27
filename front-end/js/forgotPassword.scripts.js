@@ -16,7 +16,7 @@ const forgotPassword = async (username) => {
     );
 
     const result = await response.json();
-    if (result.response === "Correo de recuperación enviado al usuario") {
+    if (result.response === "Correo de recuperación enviado al usuario.") {
       Swal.fire({
         icon: "success",
         title: "¡Éxito!",

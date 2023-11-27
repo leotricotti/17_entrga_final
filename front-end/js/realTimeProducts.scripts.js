@@ -511,9 +511,12 @@ async function updateProductList() {
     const updateBtns = document.querySelectorAll(".update-product-btn");
 
     deleteBtns.forEach((btn, index) => {
-      if (products[index].owner === userData.email) {
+      if (
+        userData.role === "premium" &&
+        products[index].owner === userData.email
+      ) {
         btn.disabled = false;
-      } else if (userData.owner === "admin") {
+      } else if (userData.role === "admin") {
         btn.disabled = false;
       } else {
         btn.disabled = true;
@@ -521,9 +524,12 @@ async function updateProductList() {
     });
 
     updateBtns.forEach((btn, index) => {
-      if (products[index].owner === userData.email) {
+      if (
+        userData.role === "premium" &&
+        products[index].owner === userData.email
+      ) {
         btn.disabled = false;
-      } else if (userData.owner === "admin") {
+      } else if (userData.role === "admin") {
         btn.disabled = false;
       } else {
         btn.disabled = true;

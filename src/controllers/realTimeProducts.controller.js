@@ -90,7 +90,6 @@ async function deleteProduct(req, res, next) {
 
     // Obtener el producto de la base de datos
     const product = await productsService.getOneProduct(pid);
-    console.log(product.owner);
 
     // Si el usuario es premium y no es el propietario del producto, lanzar un error
     if (userRole === "premium" && product.owner !== req.user.user.username) {
@@ -107,7 +106,7 @@ async function deleteProduct(req, res, next) {
       const result = await productsService.deleteOneProduct(pid);
 
       // Si el producto no se elimina correctamente, lanzar un error
-      if (!result) {
+      if (result.length === 0 || !result) {
         req.logger.error(
           `Error de base de datos: Error al eliminar el producto ${new Date().toLocaleString()}`
         );
@@ -118,21 +117,24 @@ async function deleteProduct(req, res, next) {
           code: EErrors.DATABASE_ERROR,
         });
       } else {
+        console.log(product.owner);
+        // Crea una nueva instancia del servicio de correo
         const mailer = new MailingService();
+        // Envía un correo electrónico al propietario del producto eliminado
         const sendEmail = await mailer.sendSimpleMail({
           from: "E-Store",
-          to: user.email,
-          subject: "Usuario eliminado",
+          to: product.owner,
+          subject: "Eliminación de Producto",
           html: `
           <div style="background-color: #ffffff; max-width: 600px; margin: 0 auto; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);">
               <h2 style="text-align: center; color: #333;">Eliminación de Producto</h2>
               <p>Estimado/a ${user.first_name},</p>
-              <>Esperamos que este mensaje te encuentre bien. Nos dirigimos a ti para informarte que el producto que creaste en nuestro E-commerce ha sido eliminado de acuerdo con nuestras políticas internas.</p>
+              <p>Esperamos que este mensaje te encuentre bien. Nos dirigimos a ti para informarte que el producto que creaste en nuestro E-commerce ha sido eliminado de acuerdo con nuestras políticas internas.</p>
               <p>En caso de que esto haya sido un error o si deseas obtener más detalles sobre la eliminación de tu producto, por favor ponte en contacto con nuestro equipo de soporte a través de <a href="#" style="color: #4caf50; text-decoration: none;">Ayuda en línea</a> o llamando al <strong>+54 11 4567-8890</strong> lo antes posible. Estaremos encantados de asistirte en cualquier consulta que puedas tener.</p>
               <p>Agradecemos tu comprensión y lamentamos cualquier inconveniente que esta situación pueda haber causado. Valoramos tu participación en nuestra plataforma y esperamos seguir colaborando contigo en el futuro.</p>
               <p><strong>E-Store</strong><br>
           </div>
-            `,
+          `,
         });
         // Si el producto se elimina correctamente, enviar una respuesta exitosa
         req.logger.info(
@@ -149,7 +151,6 @@ async function deleteProduct(req, res, next) {
 
 // Método asíncrono para actualizar un producto
 async function updateProduct(req, res, next) {
-  console.log("Llego aqui");
   // Extraer el id del producto y los datos del producto de la solicitud
   const { pid } = req.params;
   const { title, description, code, price, stock, category } = req.body;
