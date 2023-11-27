@@ -116,16 +116,19 @@ async function deleteProduct(req, res, next) {
           message: "Error al eliminar el producto",
           code: EErrors.DATABASE_ERROR,
         });
-      }
-
-      // Crea una nueva instancia del servicio de correo
-      const mailer = new MailingService();
-      // Envía un correo electrónico al propietario del producto eliminado
-      const sendEmail = await mailer.sendSimpleMail({
-        from: "E-Store",
-        to: product.owner,
-        subject: "Eliminación de Producto",
-        html: `
+      } else {
+        if (
+          userRole === "premium" &&
+          product.owner === req.user.user.username
+        ) {
+          // Crea una nueva instancia del servicio de correo
+          const mailer = new MailingService();
+          // Envía un correo electrónico al propietario del producto eliminado
+          const sendEmail = await mailer.sendSimpleMail({
+            from: "E-Store",
+            to: product.owner,
+            subject: "Eliminación de Producto",
+            html: `
           <div style="background-color: #ffffff; max-width: 600px; margin: 0 auto; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);">
               <h2 style="text-align: center; color: #333;">Eliminación de Producto</h2>
               <p>Estimado/a ${req.user.user.first_name},</p>
@@ -135,12 +138,20 @@ async function deleteProduct(req, res, next) {
               <p><strong>E-Store</strong><br>
           </div>
           `,
-      });
-      // Si el producto se elimina correctamente, enviar una respuesta exitosa
-      req.logger.info(
-        `Producto eliminado con éxito ${new Date().toLocaleString()}`
-      );
-      res.json({ message: "Producto eliminado con éxito", data: result });
+          });
+          // Si el producto se elimina correctamente, enviar una respuesta exitosa
+          req.logger.info(
+            `Producto eliminado con éxito ${new Date().toLocaleString()}`
+          );
+          res.json({ message: "Producto eliminado con éxito", data: result });
+        } else {
+          // Si el producto se elimina correctamente, enviar una respuesta exitosa
+          req.logger.info(
+            `Producto eliminado con éxito ${new Date().toLocaleString()}`
+          );
+          res.json({ message: "Producto eliminado con éxito", data: result });
+        }
+      }
     }
   } catch (err) {
     // Si ocurre un error, pasar al siguiente middleware
