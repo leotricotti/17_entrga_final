@@ -12,11 +12,11 @@ async function orderDetails() {
     <div class="row">
       <div class="col mb-3">
         <p class="small text-muted mb-1">Fecha</p>
-        <p>${order.data.purchase_datetime}</p>
+        <p>${order.ticket.purchase_datetime}</p>
       </div>
       <div class="col mb-3">
         <p class="small text-muted mb-1">Orden N°</p>
-        <p>${order.data.code}</p>
+        <p>${order.ticket.code}</p>
       </div>
     </div>
     <div class="mx-n5 px-5 py-4" style="background-color: #f2f2f2">
@@ -72,7 +72,7 @@ async function orderDetails() {
         <div class="row my-4">
         <div class="col-md-4 offset-md-8 col-lg-3 offset-lg-8 d-flex w-50">
           <p class="lead fw-bold mb-0 me-2">Total:</p>
-          <p class="lead fw-bold mb-0">$${order.data.amount}</p>
+          <p class="lead fw-bold mb-0">$${order.ticket.amount}</p>
         </div>
       </div>
       `;

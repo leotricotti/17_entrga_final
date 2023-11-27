@@ -25,6 +25,8 @@ async function finishPurchase(req, res, next) {
       ]);
     }
 
+    console.log(products);
+
     // Obtener el carrito de la base de datos
     const cart = await cartService.getOneCart(cid);
 

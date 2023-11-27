@@ -20,6 +20,7 @@ const totalPurchase = (products, discount = 0.85) => {
   let total = 0;
 
   products.forEach((product) => {
+    console.log(product);
     total += product.product.price * product.quantity;
   });
 
@@ -45,7 +46,7 @@ async function finishPurchase() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          username: user.username,
+          username: user.email,
           products: products,
           amountPurchase,
         }),
@@ -54,10 +55,48 @@ async function finishPurchase() {
 
     const result = await response.json();
 
-    localStorage.setItem("order", JSON.stringify(result));
-    finishPurchaseAction();
+    console.log(result);
+
+    if (result.products.length > 0) {
+      localStorage.setItem("order", JSON.stringify(result));
+      Swal.fire({
+        icon: "success",
+        title: "Compra realizada con éxito",
+        showConfirmButton: true,
+        confirmButtonText: "Aceptar",
+        showClass: {
+          popup: "animate__animated animate__zoomIn",
+        },
+        hideClass: {
+          popup: "animate__animated animate__zoomOut",
+        },
+      }).then((result) => {
+        if (result.isConfirmed) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          localStorage.setItem("currentPage", 1);
+          localStorage.removeItem("cartId");
+          localStorage.removeItem("cart");
+          window.location.href = "../html/orderDetails.html";
+        }
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Algo salió mal! Vuelve a intentarlo",
+        showConfirmButton: true,
+        confirmButtonText: "Aceptar",
+        showClass: {
+          popup: "animate__animated animate__zoomIn",
+        },
+        hideClass: {
+          popup: "animate__animated animate__zoomOut",
+        },
+      });
+    }
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }
 
@@ -80,28 +119,7 @@ const finishPurchaseAction = () => {
     },
   }).then((result) => {
     if (result.isConfirmed) {
-      Swal.fire({
-        title: "¡Compra finalizada con éxito!",
-        text: "En unos minutos recibirás un correo con los detalles de tu compra",
-        icon: "success",
-        confirmButtonColor: "#3085d6",
-        confirmButtonText: "Aceptar",
-        showClass: {
-          popup: "animate__animated animate__zoomIn",
-        },
-        hideClass: {
-          popup: "animate__animated animate__zoomOut",
-        },
-      }).then((result) => {
-        if (result.isConfirmed) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          localStorage.setItem("currentPage", 1);
-          localStorage.removeItem("cartId");
-          localStorage.removeItem("cart");
-          window.location.href = "../html/orderDetails.html";
-        }
-      });
+      finishPurchase();
     }
   });
 };
@@ -322,7 +340,7 @@ const showCartProducts = async () => {
               <button
               class="btn btn-secondary btn-sm mb-2"
               type="button"
-              onclick="finishPurchase()"
+              onclick="finishPurchaseAction()"
             >
               Finalizar compra
             </button>

@@ -25,16 +25,18 @@ const showIncompleteProfileMessage = () => {
   });
 };
 
-// // Funcion que verifica si el perfil de usuario está completo
+// Funcion que verifica si el perfil de usuario está completo
 const checkUserProfile = () => {
   if (
     loadUserProfile[0].phone_number === "" ||
     loadUserProfile[0].home_address == "" ||
     loadUserProfile[0].city == "" ||
     loadUserProfile[0].state == "" ||
-    loadUserProfile[0].zip_code == "" ||
+    loadUserProfile[0].zip_code == ""
   ) {
     showIncompleteProfileMessage();
+  } else {
+    return;
   }
 };
 
