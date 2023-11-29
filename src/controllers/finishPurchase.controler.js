@@ -10,7 +10,6 @@ import MailingService from "../services/mailing.js";
 
 // Función para finalizar la compra
 async function finishPurchase(req, res, next) {
-  console.log(req.user);
   // Extraer los datos del cuerpo de la solicitud
   const { username, products, amountPurchase } = req.body;
   const { cid } = req.params;
@@ -26,8 +25,6 @@ async function finishPurchase(req, res, next) {
         cid,
       ]);
     }
-
-    console.log(products);
 
     // Obtener el carrito de la base de datos
     const cart = await cartService.getOneCart(cid);
@@ -102,7 +99,6 @@ async function finishPurchase(req, res, next) {
 
     // Envía el correo de recuperación de contraseña
     try {
-      console.log(productWithOutStock);
       await mailer.sendSimpleMail({
         from: "E-Store",
         to: req.user.user.username,

@@ -54,8 +54,6 @@ async function finishPurchase() {
 
     const result = await response.json();
 
-    console.log(result);
-
     if (result.message.includes("Compra realizada con éxito.")) {
       localStorage.setItem("order", JSON.stringify(result));
       Swal.fire({
