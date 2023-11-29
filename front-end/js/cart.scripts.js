@@ -53,6 +53,7 @@ async function finishPurchase() {
     );
 
     const result = await response.json();
+    showSpinner(result);
 
     if (result.message.includes("Compra realizada con éxito.")) {
       localStorage.setItem("order", JSON.stringify(result));
@@ -99,6 +100,7 @@ async function finishPurchase() {
 
 // Funcion que confirma o rechaza la compra
 const finishPurchaseAction = () => {
+  const startSpinner = document.getElementById("spinner");
   Swal.fire({
     title: "¿Estás seguro?",
     text: "¡No podrás revertir esto!",
@@ -117,6 +119,9 @@ const finishPurchaseAction = () => {
   }).then((result) => {
     if (result.isConfirmed) {
       finishPurchase();
+      document.getElementById("navbar-top").classList.add("d-none");
+      startSpinner.classList.remove("d-none");
+      startSpinner.classList.add("d-block");
     }
   });
 };
