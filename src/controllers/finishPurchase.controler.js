@@ -109,7 +109,7 @@ async function finishPurchase(req, res, next) {
         subject: "Confirmación de Compra",
         html: `   
         <h1>Compra realizada con éxito</h1>
-        <p>Estimado ${req.user.user.username},</p>
+        <p>Estimado ${req.user.user.first_name},</p>
         <p>Le informamos que su compra se ha realizado con éxito.</p>
         <p>El total de su compra es de $${totalPurchase.toFixed(2)}.</p>
         <p>Los siguientes productos no se pudieron comprar:</p>
@@ -117,7 +117,7 @@ async function finishPurchase(req, res, next) {
           ${productWithOutStock
             .map(
               (product) =>
-                `<li>${product.product.name} - ${product.quantity}</li>`
+                `<li>${product.product.title} - ${product.quantity}</li>`
             )
             .join("")}
         </ul>
