@@ -1,6 +1,6 @@
 //Puerto para el servidor
 const serverPort = async () => {
-  const port = await fetch("http://localhost:8080");
+  const port = await fetch("e-store.up.railway.app");
   const result = await port.json();
   localStorage.setItem("port", result.port);
 };
