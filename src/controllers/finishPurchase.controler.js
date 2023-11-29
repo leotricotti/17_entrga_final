@@ -6,9 +6,11 @@ import {
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enum.js";
 import { generateTicketErrorInfo } from "../services/errors/info.js";
+import MailingService from "../services/mailing.js";
 
 // Función para finalizar la compra
 async function finishPurchase(req, res, next) {
+  console.log(req.user);
   // Extraer los datos del cuerpo de la solicitud
   const { username, products, amountPurchase } = req.body;
   const { cid } = req.params;
@@ -95,14 +97,48 @@ async function finishPurchase(req, res, next) {
     // Actualizar el carrito en la base de datos
     const result = await cartService.updateOneCart(cid, cart);
 
+    // Crea una nueva instancia del servicio de correo
+    const mailer = new MailingService();
+
+    // Envía el correo de recuperación de contraseña
+    try {
+      console.log(productWithOutStock);
+      await mailer.sendSimpleMail({
+        from: "E-Store",
+        to: req.user.user.username,
+        subject: "Confirmación de Compra",
+        html: `   
+        <h1>Compra realizada con éxito</h1>
+        <p>Estimado ${req.user.user.username},</p>
+        <p>Le informamos que su compra se ha realizado con éxito.</p>
+        <p>El total de su compra es de $${totalPurchase.toFixed(2)}.</p>
+        <p>Los siguientes productos no se pudieron comprar:</p>
+        <ul>
+          ${productWithOutStock
+            .map(
+              (product) =>
+                `<li>${product.product.name} - ${product.quantity}</li>`
+            )
+            .join("")}
+        </ul>
+        <p>Gracias por su compra.</p>
+        <p>Atentamente,</p>
+        <p>El equipo de E-Store</p>
+        `,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+
     // Enviar la respuesta
     res.json({
       message:
         productWithOutStock.length === 0
-          ? "Compra realizada con éxito"
+          ? "Compra realizada con éxito."
           : "Compra realizada con éxito. Los siguientes productos no se pudieron comprar",
       ticket: newTicket,
-      products: productWithOutStock,
+      products: productWithStock,
+      remainingProducts: productWithOutStock,
     });
   } catch (error) {
     // Pasar el error al siguiente middleware

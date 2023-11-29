@@ -20,7 +20,6 @@ const totalPurchase = (products, discount = 0.85) => {
   let total = 0;
 
   products.forEach((product) => {
-    console.log(product);
     total += product.product.price * product.quantity;
   });
 
@@ -57,7 +56,7 @@ async function finishPurchase() {
 
     console.log(result);
 
-    if (result.products.length > 0) {
+    if (result.message.includes("Compra realizada con éxito.")) {
       localStorage.setItem("order", JSON.stringify(result));
       Swal.fire({
         icon: "success",

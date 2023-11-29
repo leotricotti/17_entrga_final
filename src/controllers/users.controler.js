@@ -16,7 +16,6 @@ import UsersDto from "../dao/DTOs/users.dto.js";
 
 // Importaciones de utilidades
 import { generateToken, createHash, isValidPassword } from "../utils/index.js";
-import e from "express";
 
 // Ruta que obtiene todos los usuarios
 async function getAllUsers(req, res, next) {
