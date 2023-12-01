@@ -57,6 +57,7 @@ async function getAllUsers(req, res, next) {
 // Ruta que realiza el envío de correo de recuperación de contraseña
 async function forgotPassword(req, res, next) {
   const { username } = req.body;
+  console.log(username);
 
   try {
     // Si no se proporciona un nombre de usuario, registra un error y devuelve un mensaje
