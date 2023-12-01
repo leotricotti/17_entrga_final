@@ -113,7 +113,8 @@ const initializeGithubStrategy = () => {
         session: false,
         clientID: "Iv1.7be0043c6885f5d1",
         clientSecret: "57564a13a31c648f5f04c19dbbf5d5dfaddb1208",
-        callbackURL: "http://localhost:8080/api/sessions/githubcallback",
+        callbackURL:
+          "https://e-store.up.railway.app/api/sessions/githubcallback",
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
