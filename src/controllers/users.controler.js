@@ -82,6 +82,9 @@ async function forgotPassword(req, res, next) {
     // Busca al usuario en la base de datos
     const user = await usersService.getOneUser(username);
 
+    console.log(user);
+    console.log(user.length);
+
     // Si el usuario no existe, registra un error y devuelve un mensaje
     if (user.length === 0) {
       req.logger.error(
