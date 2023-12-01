@@ -150,7 +150,7 @@ async function githubCallback(req, res, next) {
       });
 
       res.redirect(
-        `http://127.0.0.1:5500/html/githubLogin.html?token=${token}`
+        `https://leotricotti.github.io/front-end/html/githubLogin.html?token=${token}`
       );
     }
   } catch (error) {
