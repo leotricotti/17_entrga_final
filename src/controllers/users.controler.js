@@ -99,8 +99,6 @@ async function forgotPassword(req, res, next) {
     // Genera un token para la recuperación de la contraseña
     const passwordToken = generateToken({ username });
 
-    console.log("passwordToken", passwordToken);
-
     // Crea una nueva instancia del servicio de correo
     const mailer = new MailingService();
     try {
