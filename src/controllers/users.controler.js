@@ -99,15 +99,17 @@ async function forgotPassword(req, res, next) {
     // Genera un token para la recuperación de la contraseña
     const passwordToken = generateToken({ username });
 
+    console.log("passwordToken", passwordToken);
+
     // Crea una nueva instancia del servicio de correo
     const mailer = new MailingService();
-
-    // Envía el correo de recuperación de contraseña
-    await mailer.sendSimpleMail({
-      from: "E-Store",
-      to: username,
-      subject: "Recuperación de contraseña",
-      html: `  <div style="background-color: #ffffff; max-width: 600px; margin: 0 auto; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);">
+    try {
+      // Envía el correo de recuperación de contraseña
+      await mailer.sendSimpleMail({
+        from: "E-Store",
+        to: username,
+        subject: "Recuperación de contraseña",
+        html: `  <div style="background-color: #ffffff; max-width: 600px; margin: 0 auto; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);">
       <h2 style="text-align: center; color: #333;">Recuperación de Contraseña</h2>
       <p>Estimado/a ${user[0].first_name},</p>
       <p>Te enviamos este correo electrónico porque solicitaste restablecer tu contraseña. Para completar el proceso por favor sigue las instrucciones:</p>
@@ -119,7 +121,11 @@ async function forgotPassword(req, res, next) {
       <p><strong>E-Store</strong><br>
   </div>
     `,
-    });
+      });
+    } catch (error) {
+      // Si ocurre un error, pasa el error al manejador de errores
+      console.log(error);
+    }
 
     // Registra el éxito del envío del correo y devuelve una respuesta
     req.logger.info(
