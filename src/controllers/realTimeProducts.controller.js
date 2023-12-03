@@ -9,6 +9,7 @@ import MailingService from "../services/mailing.js";
 
 // Método asíncrono para guardar un producto
 async function saveProduct(req, res, next) {
+  console.log("Inicio");
   // Parsear el producto del cuerpo de la solicitud
   const productData = JSON.parse(req.body.newProduct);
   const file = req.files;
@@ -45,6 +46,8 @@ async function saveProduct(req, res, next) {
 
     // Intentar guardar el producto en la base de datos
     const result = await productsService.saveOneProduct(product);
+
+    console.log(result);
 
     // Si el producto no se guarda correctamente, lanzar un error
     if (!result) {
