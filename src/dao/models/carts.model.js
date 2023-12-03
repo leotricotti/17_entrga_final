@@ -17,10 +17,6 @@ const cartsSchema = mongoose.Schema({
     ],
     default: [],
   },
-  status: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 //Middleware para popular el carrito
