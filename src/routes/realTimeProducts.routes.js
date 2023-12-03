@@ -18,9 +18,7 @@ router.get("/:pid", getOne);
 
 //Ruta para guardar un producto
 router.post(
-  console.log("router"),
   "/",
-  console.log("router"),
   uploader.fields([{ name: "userProductImage", maxCount: 3 }]),
   console.log("router"),
   saveProduct
