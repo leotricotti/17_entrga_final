@@ -90,7 +90,7 @@ async function deleteProduct(req, res, next) {
       req.logger.error(
         `Error de tipo de dato: Error al eliminar el producto ${new Date().toLocaleString()}`
       );
-      throw new CustomError({
+      CustomError({
         name: "Error de tipo de dato",
         cause: generateProductErrorInfo(pid, EErrors.INVALID_TYPES_ERROR),
         message: "Error al eliminar el producto",
@@ -182,7 +182,7 @@ async function updateProduct(req, res, next) {
       req.logger.error(
         `Error de tipo de dato: Error al actualizar el producto ${new Date().toLocaleString()}`
       );
-      throw new CustomError({
+      CustomError({
         name: "Error de tipo de datos",
         cause: generateProductErrorInfo(data, EErrors.INVALID_TYPES_ERROR),
         message: "Error al actualizar el producto",
@@ -208,7 +208,7 @@ async function updateProduct(req, res, next) {
       req.logger.error(
         `Error de base de datos: Error al actualizar el producto ${new Date().toLocaleString()}`
       );
-      throw new CustomError({
+      CustomError({
         name: "Error de base de datos",
         cause: generateProductErrorInfo(result, EErrors.DATABASE_ERROR),
         message: "Error al actualizar el producto",
