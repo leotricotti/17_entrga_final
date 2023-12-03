@@ -9,77 +9,67 @@ import MailingService from "../services/mailing.js";
 
 // Método asíncrono para guardar un producto
 async function saveProduct(req, res, next) {
-  console.log("inicio");
+  // Parsear el producto del cuerpo de la solicitud
+  const productData = JSON.parse(req.body.newProduct);
+  const file = req.files;
+  const { title, description, code, price, stock, category, owner } =
+    productData;
+  const thumbnail = file.userProductImage[0].path;
+  console.log("llego aca???");
 
-  res.send("Estoy");
-  // // Parsear el producto del cuerpo de la solicitud
-  // const productData = JSON.parse(req.body.newProduct);
-  // const file = req.files;
-  // const { title, description, code, price, stock, category, owner } =
-  //   productData;
-  // const thumbnail = file.userProductImage[0].path;
-  // console.log("llego aca???");
+  try {
+    // Verificar que todos los campos requeridos estén presentes
+    if (!title || !description || !price || !code || !stock || !category) {
+      const data = { title, description, code, price, stock, category };
+      req.logger.error(
+        `Error de tipo de dato: Error al crear el producto ${new Date().toLocaleString()}`
+      );
+      CustomError.createError({
+        name: "Error de tipo de datos",
+        cause: generateProductErrorInfo(data, EErrors.INVALID_TYPES_ERROR),
+        message: "Error al crear el producto",
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
+    }
+    // Crear el objeto del producto
+    const product = {
+      title,
+      description,
+      code,
+      price,
+      stock,
+      owner,
+      category,
+      thumbnail: [{ img1: thumbnail }],
+    };
 
-  // try {
-  //   // Verificar que todos los campos requeridos estén presentes
-  //   if (!title || !description || !price || !code || !stock || !category) {
-  //     const data = { title, description, code, price, stock, category };
-  //     req.logger.error(
-  //       `Error de tipo de dato: Error al crear el producto ${new Date().toLocaleString()}`
-  //     );
-  //     throw new CustomError({
-  //       name: "Error de tipo de datos",
-  //       cause: generateProductErrorInfo(data, EErrors.INVALID_TYPES_ERROR),
-  //       message: "Error al crear el producto",
-  //       code: EErrors.INVALID_TYPES_ERROR,
-  //     });
-  //   }
+    // Intentar guardar el producto en la base de datos
+    const result = await productsService.saveOneProduct(product);
 
-  //   console.log("aca estoy");
-  //   // Crear el objeto del producto
-  //   const product = {
-  //     title,
-  //     description,
-  //     code,
-  //     price,
-  //     stock,
-  //     owner,
-  //     category,
-  //     thumbnail: [{ img1: thumbnail }],
-  //   };
+    // Si el producto no se guarda correctamente, lanzar un error
+    if (!result) {
+      req.logger.error(
+        `Error de base de datos: Error al crear el producto ${new Date().toLocaleString()}`
+      );
+      CustomError.createError({
+        name: "Error de base de datos",
+        cause: generateProductErrorInfo(result, EErrors.DATABASE_ERROR),
+        message: "Error al crear el producto",
+        code: EErrors.DATABASE_ERROR,
+      });
+    }
 
-  //   console.log(product);
-
-  //   // Intentar guardar el producto en la base de datos
-  //   const result = await productsService.saveOneProduct(product);
-
-  //   console.log(result);
-
-  //   // Si el producto no se guarda correctamente, lanzar un error
-  //   if (!result) {
-  //     req.logger.error(
-  //       `Error de base de datos: Error al crear el producto ${new Date().toLocaleString()}`
-  //     );
-  //     throw new CustomError({
-  //       name: "Error de base de datos",
-  //       cause: generateProductErrorInfo(result, EErrors.DATABASE_ERROR),
-  //       message: "Error al crear el producto",
-  //       code: EErrors.DATABASE_ERROR,
-  //     });
-  //   }
-
-  //   // Si el producto se guarda correctamente, enviar una respuesta exitosa
-  //   req.logger.info(`Producto creado con éxito ${new Date().toLocaleString()}`);
-  //   res.json({ message: "Producto creado con éxito", data: result });
-  // } catch (err) {
-  //   // Si ocurre un error, pasar al siguiente middleware
-  //   next(err);
-  // }
+    // Si el producto se guarda correctamente, enviar una respuesta exitosa
+    req.logger.info(`Producto creado con éxito ${new Date().toLocaleString()}`);
+    res.json({ message: "Producto creado con éxito", data: result });
+  } catch (err) {
+    // Si ocurre un error, pasar al siguiente middleware
+    next(err);
+  }
 }
 
 // Método asíncrono para eliminar un producto
 async function deleteProduct(req, res, next) {
-  console.log("Delete product");
   // Extraer el id del producto y el rol del usuario de la solicitud
   const { pid } = req.params;
   const userRole = req.user.role;
@@ -106,7 +96,7 @@ async function deleteProduct(req, res, next) {
       req.logger.error(
         `Error de permisos: Error al eliminar el producto ${new Date().toLocaleString()}`
       );
-      throw new CustomError({
+      CustomError.createError({
         name: "Error de permisos",
         cause: generateAuthErrorInfo(userRole, EErrors.AUTH_ERROR),
         message: "Error al eliminar el producto",
@@ -120,7 +110,7 @@ async function deleteProduct(req, res, next) {
         req.logger.error(
           `Error de base de datos: Error al eliminar el producto ${new Date().toLocaleString()}`
         );
-        throw new CustomError({
+        CustomError.createError({
           name: "Error de base de datos",
           cause: generateProductErrorInfo(result, EErrors.DATABASE_ERROR),
           message: "Error al eliminar el producto",
@@ -182,7 +172,7 @@ async function updateProduct(req, res, next) {
       req.logger.error(
         `Error de tipo de dato: Error al actualizar el producto ${new Date().toLocaleString()}`
       );
-      CustomError({
+      CustomError.createError({
         name: "Error de tipo de datos",
         cause: generateProductErrorInfo(data, EErrors.INVALID_TYPES_ERROR),
         message: "Error al actualizar el producto",
