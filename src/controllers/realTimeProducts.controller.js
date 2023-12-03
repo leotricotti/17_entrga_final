@@ -79,6 +79,7 @@ async function saveProduct(req, res, next) {
 
 // Método asíncrono para eliminar un producto
 async function deleteProduct(req, res, next) {
+  console.log("Delete product");
   // Extraer el id del producto y el rol del usuario de la solicitud
   const { pid } = req.params;
   const userRole = req.user.role;

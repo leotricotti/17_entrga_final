@@ -19,7 +19,7 @@ router.get("/:pid", getOne);
 //Ruta para guardar un producto
 router.post(
   "/",
-  uploader.fields([{ name: "userProductImage", maxCount: 3 }]),
+  uploader.fields([{ name: "userProductImage", maxCount: 1 }]),
   saveProduct
 );
 
