@@ -11,6 +11,7 @@ import MailingService from "../services/mailing.js";
 async function saveProduct(req, res, next) {
   console.log("inicio");
 
+  res.send("Estoy");
   // // Parsear el producto del cuerpo de la solicitud
   // const productData = JSON.parse(req.body.newProduct);
   // const file = req.files;
