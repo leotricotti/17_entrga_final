@@ -9,6 +9,8 @@ import MailingService from "../services/mailing.js";
 
 // Método asíncrono para guardar un producto
 async function saveProduct(req, res, next) {
+  console.log("inicio");
+
   // Parsear el producto del cuerpo de la solicitud
   const productData = JSON.parse(req.body.newProduct);
   const file = req.files;
