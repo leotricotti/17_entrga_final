@@ -15,6 +15,7 @@ async function saveProduct(req, res, next) {
   const { title, description, code, price, stock, category, owner } =
     productData;
   const thumbnail = file.userProductImage[0].path;
+  console.log("llego aca???");
 
   try {
     // Verificar que todos los campos requeridos estén presentes
@@ -31,6 +32,7 @@ async function saveProduct(req, res, next) {
       });
     }
 
+    console.log("aca estoy");
     // Crear el objeto del producto
     const product = {
       title,
@@ -42,6 +44,8 @@ async function saveProduct(req, res, next) {
       category,
       thumbnail: [{ img1: thumbnail }],
     };
+
+    console.log(product);
 
     // Intentar guardar el producto en la base de datos
     const result = await productsService.saveOneProduct(product);
