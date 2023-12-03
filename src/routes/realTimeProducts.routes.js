@@ -20,7 +20,6 @@ router.get("/:pid", getOne);
 router.post(
   "/",
   uploader.fields([{ name: "userProductImage", maxCount: 3 }]),
-  console.log("router"),
   saveProduct
 );
 
