@@ -12,7 +12,7 @@ async function saveProduct(req, res, next) {
   // Parsear el producto del cuerpo de la solicitud
   const { title, description, code, price, stock, category, owner } = req.body;
 
-  console.log(category);
+  console.log(req.body);
 
   try {
     // Verificar que todos los campos requeridos estén presentes
