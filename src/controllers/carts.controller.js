@@ -344,18 +344,14 @@ async function deleteProduct(req, res, next) {
     }
 
     // Busca el producto en el carrito
-    let productExistsInCarts = cart.products.find(
+    let productExistsInCart = cart.products.find(
       (dato) => dato.product === pid
     );
 
-    console.log(productExistsInCarts);
-
     // Si el producto está en el carrito, lo elimina
-    if (productExistsInCarts !== -1) {
-      cart.products.splice(productExistsInCarts, 1);
+    if (productExistsInCart) {
+      cart.products.splice(productExistsInCart, 1);
     }
-
-    console.log(cart);
 
     // Solicita al servicio de carritos que actualice el carrito
     const result = await cartService.updateOneCart(cid, cart);
