@@ -344,7 +344,7 @@ async function deleteProduct(req, res, next) {
     }
 
     // Busca el producto en el carrito
-    let productExistsInCarts = cart.products.findIndex(
+    let productExistsInCarts = cart.products.find(
       (dato) => dato.product === pid
     );
 
