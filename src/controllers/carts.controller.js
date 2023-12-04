@@ -348,13 +348,19 @@ async function deleteProduct(req, res, next) {
       (dato) => dato.product === pid
     );
 
+    console.log(productExistsInCarts);
+
     // Si el producto está en el carrito, lo elimina
     if (productExistsInCarts !== -1) {
       cart.products.splice(productExistsInCarts, 1);
     }
 
+    console.log(cart);
+
     // Solicita al servicio de carritos que actualice el carrito
     const result = await cartService.updateOneCart(cid, cart);
+
+    console.log("result", result);
 
     // Si el carrito no se actualiza correctamente, registra un error y envía una respuesta con estado 500
     if (!result) {
