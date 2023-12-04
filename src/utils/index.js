@@ -177,8 +177,6 @@ const storage = multer.diskStorage({
     let path = __dirname + "/public";
     if (file.fieldname.includes("Profile")) {
       path += "/profiles";
-    } else {
-      path += "/products";
     }
     cb(null, path);
   },

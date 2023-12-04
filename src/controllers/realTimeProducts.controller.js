@@ -9,14 +9,8 @@ import MailingService from "../services/mailing.js";
 
 // Método asíncrono para guardar un producto
 async function saveProduct(req, res, next) {
-  console.log("Inicio");
   // Parsear el producto del cuerpo de la solicitud
-  const productData = JSON.parse(req.body.newProduct);
-  const file = req.files;
-  const { title, description, code, price, stock, category, owner } =
-    productData;
-  const thumbnail = file.userProductImage[0].path;
-  console.log("llego aca???");
+  const { title, description, code, price, stock, category, owner } = req.body;
 
   try {
     // Verificar que todos los campos requeridos estén presentes
@@ -41,7 +35,11 @@ async function saveProduct(req, res, next) {
       stock,
       owner,
       category,
-      thumbnail: [{ img1: thumbnail }],
+      thumbnail: [
+        {
+          img1: "https://www.hapuricellisa.com.ar/plugins/productos/producto-sin-imagen.png",
+        },
+      ],
     };
 
     // Intentar guardar el producto en la base de datos
