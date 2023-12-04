@@ -45,8 +45,6 @@ async function saveProduct(req, res, next) {
     // Intentar guardar el producto en la base de datos
     const result = await productsService.saveOneProduct(product);
 
-    console.log(result);
-
     // Si el producto no se guarda correctamente, lanzar un error
     if (!result) {
       req.logger.error(
