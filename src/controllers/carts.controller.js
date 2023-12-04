@@ -356,8 +356,6 @@ async function deleteProduct(req, res, next) {
     // Solicita al servicio de carritos que actualice el carrito
     const result = await cartService.updateOneCart(cid, cart);
 
-    console.log("result", result);
-
     // Si el carrito no se actualiza correctamente, registra un error y envía una respuesta con estado 500
     if (!result) {
       req.logger.error(
