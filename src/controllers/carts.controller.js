@@ -351,6 +351,8 @@ async function deleteProduct(req, res, next) {
       (dato) => dato.product === pid
     );
 
+    console.log(productExistsInCart);
+
     // Si el producto está en el carrito, lo elimina
     if (productExistsInCart) {
       cart.products.splice(productExistsInCart, 1);
