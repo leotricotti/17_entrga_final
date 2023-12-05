@@ -544,6 +544,7 @@ async function deleteUsers(req, res, next) {
   try {
     const usersToDelete = [];
     const allUsers = await usersService.getAllUsers();
+    console.log("allUsers", allUsers);
 
     if (allUsers.length === 0) {
       req.logger.error(
@@ -582,7 +583,7 @@ async function deleteUsers(req, res, next) {
       });
       usersToDelete.push(...filteredUsers);
     }
-
+    console.log("fiteredUsers", filteredUsers);
     const userIdsToDelete = usersToDelete.map((user) => user._id);
     if (userIdsToDelete.length === 0) {
       req.logger.info(
