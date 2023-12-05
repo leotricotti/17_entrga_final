@@ -91,7 +91,7 @@ describe("Testing Ecommerse Store", () => {
         .set("Authorization", `Bearer ${userToken}`)
         .send({ op: "add" });
       expect(response.status).to.eql(200);
-      expect(response.body.message).to.equal("Carrito actualizado con éxito");
+      expect(response.body.message).to.equal("Carrito actualizado con éxito.");
       expect(
         response.body.data.products.some((product) => product.product === pid)
       ).to.be.true;
@@ -105,7 +105,7 @@ describe("Testing Ecommerse Store", () => {
         .send({ op: "add" });
       quantity = response.body.data.products[0].quantity;
       expect(response.status).to.eql(200);
-      expect(response.body.message).to.equal("Carrito actualizado con éxito");
+      expect(response.body.message).to.equal("Carrito actualizado con éxito.");
       expect(
         response.body.data.products.some((product) => product.product === pid)
       ).to.be.true;

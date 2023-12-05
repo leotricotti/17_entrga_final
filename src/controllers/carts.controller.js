@@ -152,7 +152,6 @@ async function populatedCart(req, res, next) {
 
 // Método asíncrono para crear un carrito
 async function createCart(req, res, next) {
-  console.log("estoy");
   // Extrae el nuevo carrito del cuerpo de la solicitud
   const newCart = req.body;
 
@@ -173,8 +172,6 @@ async function createCart(req, res, next) {
 
     // Solicita al servicio de carritos que guarde el nuevo carrito
     const result = await cartService.saveOneCart(newCart);
-
-    console.log(result);
 
     // Si el carrito no se guarda correctamente, registra un error y envía una respuesta con estado 500
     if (!result.products) {
@@ -351,14 +348,10 @@ async function deleteProduct(req, res, next) {
       (dato) => dato.product === pid
     );
 
-    console.log(productExistsInCart);
-
     // Si el producto está en el carrito, lo elimina
     if (productExistsInCart) {
       cart.products.splice(productExistsInCart, 1);
     }
-
-    console.log(cart);
 
     // Solicita al servicio de carritos que actualice el carrito
     const result = await cartService.updateOneCart(cid, cart);
