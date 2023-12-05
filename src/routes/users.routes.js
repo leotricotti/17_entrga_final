@@ -1,14 +1,8 @@
 import { Router } from "express";
-import {
-  verifyToken,
-  authToken,
-  uploader,
-  authorization,
-} from "../utils/index.js";
+import { verifyToken, authToken, authorization } from "../utils/index.js";
 import {
   deleteUsers,
   deleteUser,
-  addDocumentsToUser,
   updateUser,
   forgotPassword,
   updatePassword,
@@ -26,14 +20,6 @@ router.get("/", authToken, authorization("admin"), getAllUsers);
 
 // Ruta que envia el usuario logueado
 router.get("/current", passportCall("jwt"), currentUser);
-
-// Ruta que agrega un documento al usuario
-router.post(
-  "/:uid/documents",
-  authToken,
-  uploader.fields([{ name: "userProfileImage", maxCount: 1 }]),
-  addDocumentsToUser
-);
 
 //Ruta que recupera la contraseña
 router.post("/forgotPassword", forgotPassword);

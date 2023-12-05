@@ -468,89 +468,6 @@ async function currentUser(req, res) {
   });
 }
 
-// Ruta que agrega un documento al usuario
-async function addDocumentsToUser(req, res, next) {
-  const files = req.files;
-  const { uid } = req.params;
-
-  try {
-    // Si no se proporciona uid, registra un error y devuelve un mensaje
-    if (!uid) {
-      req.logger.error(
-        `Error de tipo de dato: Error al agregar un documento. Faltan datos. ${new Date().toLocaleString()}`
-      );
-      CustomError.createError({
-        name: "Error de tipo de dato",
-        cause: generateSessionErrorInfo([uid], EErrors.INVALID_TYPES_ERROR),
-        message: "Error al agregar un documento. Faltan datos.",
-        code: EErrors.INVALID_TYPES_ERROR,
-      });
-      return res
-        .status(400)
-        .json({ message: "Error al agregar un documento. Faltan datos." });
-    }
-
-    // Busca al usuario en la base de datos
-    const user = await usersService.getOneUser(uid);
-
-    // Si el usuario no existe, registra un error y devuelve un mensaje
-    if (user.length === 0) {
-      req.logger.error(
-        `Error de base de datos: Usuario no encontrado. ${new Date().toLocaleString()}`
-      );
-      CustomError.createError({
-        name: "Error de base de datos",
-        cause: generateSessionErrorInfo(user, EErrors.DATABASE_ERROR),
-        message: "Usuario no encontrado.",
-        code: EErrors.DATABASE_ERROR,
-      });
-      return res.status(404).json({ message: "Usuario no encontrado." });
-    }
-
-    // Si el usuario existe, agrega los documentos al usuario
-    const id = user[0]._id;
-    let result;
-    if (files.userProfileImage) {
-      result = await usersService.updateOneProfileImage(
-        id,
-        files.userProfileImage[0]
-      );
-    } else {
-      result = await usersService.addUserDocuments(id, files);
-    }
-
-    // Si no se pudo agregar el documento, registra un error y devuelve un mensaje
-    if (result.length === 0 || !result) {
-      req.logger.error(
-        `Error de base de datos: Error al agregar el documento. ${new Date().toLocaleString()}`
-      );
-      CustomError.createError({
-        name: "Error de base de datos",
-        cause: generateSessionErrorInfo(result, EErrors.DATABASE_ERROR),
-        message: "Error al agregar el documento.",
-        code: EErrors.DATABASE_ERROR,
-      });
-      return res
-        .status(404)
-        .json({ message: "Error al agregar el documento." });
-    }
-
-    // Si se pudo agregar el documento, obtiene los datos actualizados del usuario y devuelve una respuesta
-    const updatedUser = await usersService.getOneUser(uid);
-    const userDto = new UsersDto(updatedUser[0]);
-    req.logger.info(
-      `Documento agregado con éxito ${new Date().toLocaleString()}`
-    );
-    return res.json({
-      message: "Documento agregado con éxito.",
-      data: userDto,
-    });
-  } catch (error) {
-    // Si ocurre un error, pasa el error al manejador de errores
-    next(error);
-  }
-}
-
 // Ruta que elimina un usuario
 async function deleteUser(req, res, next) {
   const { uid } = req.params;
@@ -709,7 +626,6 @@ async function deleteUsers(req, res, next) {
 
 export {
   getAllUsers,
-  addDocumentsToUser,
   updateUser,
   deleteUser,
   deleteUsers,

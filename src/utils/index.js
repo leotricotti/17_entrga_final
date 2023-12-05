@@ -4,10 +4,7 @@ import config from "../config/config.js";
 import jwt from "jsonwebtoken";
 import { faker } from "@faker-js/faker/locale/es";
 import { usersService } from "../repository/index.js";
-import multer from "multer";
 import __dirname from "../../utils.js";
-import { v4 as uuidv4 } from "uuid";
-import path from "path";
 
 //Cargar variables de entorno
 const JWT_SECRET = config.jwt.SECRET;
@@ -170,21 +167,3 @@ export function generateProducts() {
     ],
   };
 }
-
-// Configurar multer
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    let path = __dirname + "/public";
-    if (file.fieldname.includes("Profile")) {
-      path += "/profiles";
-    }
-    cb(null, path);
-  },
-  filename: function (req, file, cb) {
-    // Generar un identificador único y agregar la extensión del archivo original
-    const uniqueName = `${uuidv4()}${path.extname(file.originalname)}`;
-    cb(null, uniqueName);
-  },
-});
-
-export const uploader = multer({ storage: storage });
