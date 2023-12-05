@@ -118,10 +118,7 @@ async function deleteProduct(req, res, next) {
           code: EErrors.DATABASE_ERROR,
         });
       } else {
-        if (
-          req.user.user.role === "premium" &&
-          product.owner === req.user.user.username
-        ) {
+        if (product.owner !== "admin") {
           // Crea una nueva instancia del servicio de correo
           const mailer = new MailingService();
           // Envía un correo electrónico al propietario del producto eliminado
