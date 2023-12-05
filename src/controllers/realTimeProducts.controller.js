@@ -71,7 +71,7 @@ async function saveProduct(req, res, next) {
 async function deleteProduct(req, res, next) {
   // Extraer el id del producto y el rol del usuario de la solicitud
   const { pid } = req.params;
-  console.log(req.user.user.role, req.user.user.username);
+
   try {
     // Si no se proporciona un id de producto, lanzar un error
     if (!pid) {
@@ -89,8 +89,13 @@ async function deleteProduct(req, res, next) {
     // Obtener el producto de la base de datos
     const product = await productsService.getOneProduct(pid);
 
+    console.log(product);
+
     // Si el usuario es premium y no es el propietario del producto, lanzar un error
-    if (userRole === "premium" && product.owner !== req.user.user.username) {
+    if (
+      req.user.user.role === "premium" &&
+      product.owner !== req.user.user.username
+    ) {
       req.logger.error(
         `Error de permisos: Error al eliminar el producto ${new Date().toLocaleString()}`
       );
