@@ -560,12 +560,14 @@ async function deleteUsers(req, res, next) {
       const twoDaysAgo = new Date(Date.now() - 48 * 60 * 60 * 1000);
       const filteredUsers = allUsers.filter((user) => {
         const lastConnection = user.last_connection;
+        console.log(lastConnection);
         let action;
         if (lastConnection.length >= 3) {
           action = lastConnection[lastConnection.length - 2];
         } else {
           action = lastConnection[0];
         }
+        console.log(action);
         // Extrae la fecha y hora del string action
         const dateTimeString = action.action.replace(
           "Login realizado con éxito ",
