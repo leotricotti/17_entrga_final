@@ -540,6 +540,7 @@ async function deleteUser(req, res, next) {
 
 // Ruta que elimina los usuarios sin conexión
 async function deleteUsers(req, res, next) {
+  console.log("estoy");
   try {
     const usersToDelete = [];
     const allUsers = await usersService.getAllUsers();
