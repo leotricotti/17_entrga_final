@@ -544,7 +544,6 @@ async function deleteUsers(req, res, next) {
   try {
     const usersToDelete = [];
     const allUsers = await usersService.getAllUsers();
-    console.log("allUsers", allUsers);
 
     if (allUsers.length === 0) {
       req.logger.error(
@@ -559,6 +558,7 @@ async function deleteUsers(req, res, next) {
       return res.status(404).json({ message: "No hay usuarios registrados" });
     } else {
       const twoDaysAgo = new Date(Date.now() - 48 * 60 * 60 * 1000);
+      console.log(twoDaysAgo);
       const filteredUsers = allUsers.filter((user) => {
         const lastConnection = user.last_connection;
         let action;
@@ -583,7 +583,7 @@ async function deleteUsers(req, res, next) {
       });
       usersToDelete.push(...filteredUsers);
     }
-    console.log("fiteredUsers", filteredUsers);
+    console.log("usersIdToDelete", userIdsToDelete);
     const userIdsToDelete = usersToDelete.map((user) => user._id);
     if (userIdsToDelete.length === 0) {
       req.logger.info(
