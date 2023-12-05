@@ -122,10 +122,10 @@ describe("Testing Ecommerse Store", () => {
           products: products,
         });
       expect(response.status).to.eql(200);
-      expect(response.body.message).to.equal("Compra realizada con éxito");
-      expect(response.body.data).to.have.property("code");
-      expect(response.body.data).to.have.property("purchaser");
-      expect(response.body.data.purchaser).to.eql(randomEmail);
+      expect(response.body.message).to.equal("Compra realizada con éxito.");
+      expect(response.body.ticket).to.have.property("code");
+      expect(response.body.ticket).to.have.property("purchaser");
+      expect(response.body.ticket.purchaser).to.eql(randomEmail);
       expect(response.body).to.have.property("products");
       expect(response.body.products).to.eql([]);
     });
