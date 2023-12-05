@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Session from "../../src/dao/classes/sessions.dao.js";
 import User from "../../src/dao/classes/users.dao.js";
 import Carts from "../../src/dao/classes/carts.dao.js";
 import Products from "../../src/dao/classes/products.dao.js";
@@ -34,6 +35,7 @@ describe("Testing Users Dao With Assert", () => {
   beforeEach(function () {
     this.usersDao = new User();
     this.cartsDao = new Carts();
+    this.sessionDao = new Session();
     this.productsDao = new Products();
   });
 
@@ -49,10 +51,8 @@ describe("Testing Users Dao With Assert", () => {
       last_name: "Tricotti",
       email: randomEmail,
       password: "123456",
-      carts: [],
-      role: "user",
     };
-    const result = await this.usersDao.signup(user);
+    const result = await this.sessionDao.signup(user);
     TEST_USER_ID = result._id;
     TEST_USERNAME = result.email;
     assert.equal(result.first_name, user.first_name, "Names should be equal");

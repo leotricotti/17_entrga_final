@@ -9,6 +9,5 @@ export default class UsersDto {
     this.state = user.state;
     this.city = user.city;
     this.role = user.role;
-    this.documents = user.documents;
   }
 }

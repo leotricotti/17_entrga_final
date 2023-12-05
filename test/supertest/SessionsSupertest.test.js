@@ -53,23 +53,23 @@ describe("Testing Ecommerse Store", () => {
 
     it("Should get current user", async () => {
       const response = await request
-        .get("/api/sessions/current")
+        .get("/api/users/current")
         .set("Authorization", `Bearer ${userToken}`);
       expect(response.status).to.eql(200);
       expect(response.body.data.first_name).equal("Test");
-      expect(response.body.data.username).equal(randomEmail);
+      expect(response.body.data.email).equal(randomEmail);
       expect(response.body.data).to.not.have.property("image");
     });
 
     it("Should send email to user for recovery user password", async () => {
-      const response = await request.post("/api/sessions/forgotPassword").send({
+      const response = await request.post("/api/users/forgotPassword").send({
         username: randomEmail,
       });
       passwordToken = response.body.data;
       expect(response.status).to.eql(200);
       expect(response.body).to.have.property("response");
       expect(response.body.response).to.equal(
-        "Correo de recuperación enviado al usuario"
+        "Correo de recuperación enviado al usuario."
       );
       expect(response.body).to.have.property("data");
       expect(response.body.data).not.to.be.empty;
@@ -77,7 +77,7 @@ describe("Testing Ecommerse Store", () => {
 
     it("Should update user password", async () => {
       const response = await request
-        .put(`/api/sessions/updatePassword/${passwordToken}`)
+        .put(`/api/users/updatePassword/${passwordToken}`)
         .send({
           newPasswordData: updatePassword.toString(),
         });
@@ -94,13 +94,13 @@ describe("Testing Ecommerse Store", () => {
 
     it("Should update user role", async () => {
       const response = await request
-        .put(`/api/sessions/premium/${uid}`)
+        .put(`/api/users/premium/${uid}`)
         .set("Authorization", `Bearer ${userToken}`)
         .send({
           role: "premium",
         });
       expect(response.status).to.eql(200);
-      expect(response.body.message).to.equal("Rol actualizado con éxito");
+      expect(response.body.message).to.equal("Rol actualizado con éxito.");
       expect(response.body.data.first_name).equal("Test");
       expect(response.body.data.role).equal("premium");
       expect(response.body.data).to.not.have.property("image");

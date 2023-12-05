@@ -41,7 +41,7 @@ describe("Testing Ecommerse Store", () => {
         .set("Authorization", `Bearer ${userToken}`);
       cid = response.body.data[0]._id;
       expect(response.status).to.eql(200);
-      expect(response.body.message).to.equal("Carritos cargados con éxito");
+      expect(response.body.message).to.equal("Carritos cargados con éxito.");
       expect(response.body.data[0]).to.have.property("_id");
       expect(response.body.data[0]).to.have.property("products");
     });
@@ -51,7 +51,7 @@ describe("Testing Ecommerse Store", () => {
         .get(`/api/carts/${cid}`)
         .set("Authorization", `Bearer ${userToken}`);
       expect(response.status).to.eql(200);
-      expect(response.body.message).to.equal("Carrito obtenido con éxito");
+      expect(response.body.message).to.equal("Carrito obtenido con éxito.");
       expect(response.body.data).to.have.property("_id");
       expect(response.body.data).to.have.property("products");
     });
@@ -74,7 +74,7 @@ describe("Testing Ecommerse Store", () => {
         .set("Authorization", `Bearer ${userToken}`)
         .send({ op: "add" });
       expect(response.status).to.eql(200);
-      expect(response.body.message).to.equal("Carrito actualizado con éxito");
+      expect(response.body.message).to.equal("Carrito actualizado con éxito.");
       expect(
         response.body.data.products.some((product) => product.product === pid)
       ).to.be.true;
@@ -87,7 +87,7 @@ describe("Testing Ecommerse Store", () => {
         .set("Authorization", `Bearer ${userToken}`)
         .send({ op: "add" });
       expect(response.status).to.eql(200);
-      expect(response.body.message).to.equal("Carrito actualizado con éxito");
+      expect(response.body.message).to.equal("Carrito actualizado con éxito.");
       expect(
         response.body.data.products.some((product) => product.product === pid)
       ).to.be.true;
@@ -100,7 +100,7 @@ describe("Testing Ecommerse Store", () => {
         .set("Authorization", `Bearer ${userToken}`)
         .send({ op: "substract" });
       expect(response.status).to.eql(200);
-      expect(response.body.message).to.equal("Carrito actualizado con éxito");
+      expect(response.body.message).to.equal("Carrito actualizado con éxito.");
       expect(
         response.body.data.products.some((product) => product.product === pid)
       ).to.be.true;
@@ -123,7 +123,7 @@ describe("Testing Ecommerse Store", () => {
         .delete(`/api/carts/${cid}`)
         .set("Authorization", `Bearer ${userToken}`);
       expect(response.status).to.eql(200);
-      expect(response.body.message).to.equal("Carrito vaciado con éxito");
+      expect(response.body.message).to.equal("Carrito vaciado con éxito.");
       expect(response.body.data.products).to.eql([]);
     });
   });

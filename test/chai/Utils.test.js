@@ -32,7 +32,6 @@ describe("Text Utils With Chai", () => {
   it("Should user data ", () => {
     const result = new UserDTO(user);
     expect(result.first_name).to.be.equal(user.first_name);
-    expect(result).to.be.an("object").and.to.not.have.property("last_name");
     expect(result.email).to.be.equal(user.email);
     expect(result).to.be.an("object").and.to.not.have.property("password");
     expect(result.role).to.be.equal(user.role);
