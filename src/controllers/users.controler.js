@@ -556,7 +556,7 @@ async function deleteUsers(req, res, next) {
       });
       return res.status(404).json({ message: "No hay usuarios registrados" });
     } else {
-      const twoDaysAgo = new Date(Date.now() - 48 * 60 * 60 * 1000);
+      const twoDaysAgo = new Date(Date.now() - 60 * 60 * 1000);
       const filteredUsers = allUsers.filter((user) => {
         const lastConnection = user.last_connection;
         let action;
