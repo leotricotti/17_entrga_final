@@ -72,7 +72,7 @@ async function deleteProduct(req, res, next) {
   // Extraer el id del producto y el rol del usuario de la solicitud
   const { pid } = req.params;
   const userRole = req.user.role;
-
+  console.log(userRole, req.user.user.username);
   try {
     // Si no se proporciona un id de producto, lanzar un error
     if (!pid) {
