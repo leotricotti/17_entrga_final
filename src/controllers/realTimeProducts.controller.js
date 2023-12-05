@@ -89,8 +89,6 @@ async function deleteProduct(req, res, next) {
     // Obtener el producto de la base de datos
     const product = await productsService.getOneProduct(pid);
 
-    console.log(product);
-
     // Si el usuario es premium y no es el propietario del producto, lanzar un error
     if (
       req.user.user.role === "premium" &&
