@@ -360,6 +360,8 @@ async function deleteProduct(req, res, next) {
       cart.products.splice(productExistsInCart, 1);
     }
 
+    console.log(cart);
+
     // Solicita al servicio de carritos que actualice el carrito
     const result = await cartService.updateOneCart(cid, cart);
 
